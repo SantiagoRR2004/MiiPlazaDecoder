@@ -4,10 +4,10 @@ class Mii:
     def __init__(self, bytesData: bytes) -> None:
         """
         Initialize Mii object with bytes data
-        
+
         Args:
             - bytesData (bytes): The raw bytes data of the Mii
-            
+
         Returns:
             - None
         """
@@ -17,10 +17,10 @@ class Mii:
     def setAll(self) -> None:
         """
         Set all attributes of the Mii object by decoding the bytes data
-        
+
         Args:
             - None
-            
+
         Returns:
             - None
         """
@@ -33,10 +33,10 @@ class Mii:
 
         There tends to be noise after two null bytes,
         so we stop once we find the first occurrence.
-        
+
         Args:
             - None
-            
+
         Returns:
             - None
         """
@@ -46,7 +46,7 @@ class Mii:
             nameEnd = nameEnd if nameEnd % 2 == 0 else nameEnd + 1
         else:
             nameEnd = self.bytesData[:20].find(b"\x00")
-        
+
         self.name = self.bytesData[:nameEnd].decode("utf-16le").strip("\x00")
 
     def setCreator(self) -> None:
@@ -61,14 +61,14 @@ class Mii:
 
         Returns:
             - None
-        """        
+        """
         creatorEnd = self.bytesData[46:66].find(b"\x00\x00")
 
         if creatorEnd != -1:
             creatorEnd = creatorEnd if creatorEnd % 2 == 0 else creatorEnd + 1
         else:
             creatorEnd = 0
-        
-        self.creator = self.bytesData[46:66 + creatorEnd].decode("utf-16le").strip("\x00")
 
-
+        self.creator = (
+            self.bytesData[46 : 66 + creatorEnd].decode("utf-16le").strip("\x00")
+        )
