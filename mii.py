@@ -13,6 +13,7 @@ class Mii:
         """
         assert len(bytesData) == self.MII_SIZE, "Invalid Mii size"
         self.bytesData = bytesData
+        self.setAll()
 
     def setAll(self) -> None:
         """
@@ -45,7 +46,7 @@ class Mii:
         if nameEnd != -1:
             nameEnd = nameEnd if nameEnd % 2 == 0 else nameEnd + 1
         else:
-            nameEnd = self.bytesData[:20].find(b"\x00")
+            nameEnd = 20
 
         self.name = self.bytesData[:nameEnd].decode("utf-16le").strip("\x00")
 
@@ -70,5 +71,18 @@ class Mii:
             creatorEnd = 0
 
         self.creator = (
-            self.bytesData[46 : 66 + creatorEnd].decode("utf-16le").strip("\x00")
+            self.bytesData[46 : 46 + creatorEnd].decode("utf-16le").strip("\x00")
         )
+
+    def getData(self) -> dict:
+        """
+        Get Mii data as a dictionary
+
+        Args:
+            - None
+
+        Returns:
+            - dict: Dictionary containing all Mii attributes
+        """
+        return {"name": self.name, "creator": self.creator}
+    
