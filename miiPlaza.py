@@ -16,6 +16,7 @@ class MiiPlaza:
         """
         assert len(bytesData) == self.MII_PLAZA_SIZE, "Invalid Mii Plaza size"
         self.bytesData = bytesData
+        self.setMiis()
 
     def setMiis(self) -> None:
         """
