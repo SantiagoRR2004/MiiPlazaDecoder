@@ -85,4 +85,3 @@ class Mii:
             - dict: Dictionary containing all Mii attributes
         """
         return {"name": self.name, "creator": self.creator}
-    
