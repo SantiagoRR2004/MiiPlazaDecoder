@@ -27,6 +27,8 @@ class Mii:
         """
         self.setName()
         self.setCreator()
+        self.setCountry()
+        self.setSubregion()
 
     def setName(self) -> None:
         """
@@ -74,6 +76,31 @@ class Mii:
             self.bytesData[46 : 46 + creatorEnd].decode("utf-16le").strip("\x00")
         )
 
+    def setCountry(self) -> None:
+        """
+        Decode country from bytes 86-149
+        
+        Args:
+            - None
+
+        Returns:
+            - None
+        """
+        self.country = self.bytesData[86:150].decode("utf-16le").strip("\x00")
+
+
+    def setSubregion(self) -> None:
+        """
+        Decode subregion from bytes 150-213
+        
+        Args:
+            - None
+
+        Returns:
+            - None
+        """
+        self.subregion = self.bytesData[150:214].decode("utf-16le").strip("\x00")
+
     def getData(self) -> dict:
         """
         Get Mii data as a dictionary
@@ -84,4 +111,4 @@ class Mii:
         Returns:
             - dict: Dictionary containing all Mii attributes
         """
-        return {"name": self.name, "creator": self.creator}
+        return {"name": self.name, "creator": self.creator, "country": self.country, "subregion": self.subregion}
