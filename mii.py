@@ -163,7 +163,6 @@ class Mii:
             self.bytesData[218:220], byteorder="little"
         )
 
-
     def setPlazaPopulation(self) -> None:
         """
         Set the plaza population from bytes 222-224.
