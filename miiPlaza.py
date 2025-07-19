@@ -1,12 +1,13 @@
 import mii
 
+
 class MiiPlaza:
     MII_PLAZA_SIZE = 393216
-    
+
     def __init__(self, bytesData: bytes) -> None:
         """
         Initialize MiiPlaza object with bytes data
-        
+
         Args:
             - bytesData (bytes): The raw bytes data of the Mii
 
@@ -23,7 +24,7 @@ class MiiPlaza:
 
         Args:
             - None
-            
+
         Returns:
             - None
         """
@@ -31,7 +32,7 @@ class MiiPlaza:
         pos = 14154
 
         while self.bytesData[pos] != 0:
-            miiData = self.bytesData[pos:pos + mii.Mii.MII_SIZE]
+            miiData = self.bytesData[pos : pos + mii.Mii.MII_SIZE]
             miis.append(mii.Mii(miiData))
             pos += mii.Mii.MII_SIZE
 
