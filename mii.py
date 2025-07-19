@@ -32,6 +32,7 @@ class Mii:
         self.setSubregion()
         self.setNumberCrossedWith()
         self.setStreetPassHits()
+        self.setPlazaPopulation()
 
     def setName(self) -> None:
         """
@@ -162,6 +163,24 @@ class Mii:
             self.bytesData[218:220], byteorder="little"
         )
 
+
+    def setPlazaPopulation(self) -> None:
+        """
+        Set the plaza population from bytes 222-224.
+
+        The maximum value possible is 3000
+        and it has been checked up to that value.
+
+        Args:
+            - None
+
+        Returns:
+            - None
+        """
+        self.plazaPopulation = int.from_bytes(
+            self.bytesData[222:224], byteorder="little"
+        )
+
     def getData(self) -> dict:
         """
         Get Mii data as a dictionary
@@ -180,4 +199,5 @@ class Mii:
             "Subregion": self.subregion,
             "NumberCrossedWith": self.nCrossedWith,
             "StreetPassHits": self.streetPassHits,
+            "PlazaPopulation": self.plazaPopulation,
         }
