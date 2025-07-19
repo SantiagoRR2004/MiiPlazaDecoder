@@ -31,6 +31,7 @@ class Mii:
         self.setCountry()
         self.setSubregion()
         self.setNumberCrossedWith()
+        self.setStreetPassHits()
 
     def setName(self) -> None:
         """
@@ -144,6 +145,22 @@ class Mii:
                 "Please report this as an issue to the repository."
             )
 
+    def setStreetPassHits(self) -> None:
+        """
+        Set the number of StreetPass hits for this Mii
+        This is stored in bytes 218-220.
+
+        This has been checked up to 33630.
+
+        Args:
+            - None
+
+        Returns:
+            - None
+        """
+        self.streetPassHits = int.from_bytes(self.bytesData[218:220], byteorder="little")
+
+
     def getData(self) -> dict:
         """
         Get Mii data as a dictionary
@@ -161,4 +178,5 @@ class Mii:
             "Country": self.country,
             "Subregion": self.subregion,
             "NumberCrossedWith": self.nCrossedWith,
+            "StreetPassHits": self.streetPassHits
         }
