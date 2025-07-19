@@ -30,6 +30,7 @@ class Mii:
         self.setSoftware()
         self.setCountry()
         self.setSubregion()
+        self.setNumberCrossedWith()
 
     def setName(self) -> None:
         """
@@ -120,6 +121,29 @@ class Mii:
         """
         self.subregion = self.bytesData[150:214].decode("utf-16le").strip("\x00")
 
+    def setNumberCrossedWith(self) -> None:
+        """
+        Decode the number of times crossed
+        with this Mii from bytes 214-216
+
+        This has only been checked up to 35,
+        so if it give a value greater than that,
+        check that it is accurate.
+
+        Args:
+            - None
+
+        Returns:
+            - None
+        """
+        self.nCrossedWith = int.from_bytes(self.bytesData[214:216], byteorder="little")
+        if self.nCrossedWith > 35:
+            print(
+                "Warning: Number of times crossed with this Mii is greater than 35. "
+                f"Check if this value is accurate. {self.name} has been crossed {self.nCrossedWith} times."
+                "Please report this as an issue to the repository."
+            )
+
     def getData(self) -> dict:
         """
         Get Mii data as a dictionary
@@ -136,4 +160,5 @@ class Mii:
             "GameID": self.gameID,
             "Country": self.country,
             "Subregion": self.subregion,
+            "NumberCrossedWith": self.nCrossedWith,
         }
