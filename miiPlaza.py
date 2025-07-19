@@ -50,7 +50,5 @@ class MiiPlaza:
         Returns:
             - pd.DataFrame: DataFrame containing Mii names and creators
         """
-        data = [
-            mii.getData() for mii in self.miis
-        ]
+        data = [mii.getData() for mii in self.miis]
         return pd.DataFrame(data)
