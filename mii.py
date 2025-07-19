@@ -158,8 +158,9 @@ class Mii:
         Returns:
             - None
         """
-        self.streetPassHits = int.from_bytes(self.bytesData[218:220], byteorder="little")
-
+        self.streetPassHits = int.from_bytes(
+            self.bytesData[218:220], byteorder="little"
+        )
 
     def getData(self) -> dict:
         """
@@ -178,5 +179,5 @@ class Mii:
             "Country": self.country,
             "Subregion": self.subregion,
             "NumberCrossedWith": self.nCrossedWith,
-            "StreetPassHits": self.streetPassHits
+            "StreetPassHits": self.streetPassHits,
         }
