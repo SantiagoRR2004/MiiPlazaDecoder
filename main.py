@@ -7,3 +7,7 @@ if __name__ == "__main__":
         data = f.read()
 
     plaza = miiPlaza.MiiPlaza(data)
+
+    with open("miis.csv", "w") as f:
+        # We write the Mii data to a CSV file
+        plaza.getMiiData().to_csv(f, index=False)

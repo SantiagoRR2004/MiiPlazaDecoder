@@ -1,3 +1,4 @@
+import pandas as pd
 import mii
 
 
@@ -38,3 +39,18 @@ class MiiPlaza:
             pos += mii.Mii.MII_SIZE
 
         self.miis = miis
+
+    def getMiiData(self) -> pd.DataFrame:
+        """
+        Get Mii data as a pandas DataFrame
+
+        Args:
+            - None
+
+        Returns:
+            - pd.DataFrame: DataFrame containing Mii names and creators
+        """
+        data = [
+            mii.getData() for mii in self.miis
+        ]
+        return pd.DataFrame(data)
