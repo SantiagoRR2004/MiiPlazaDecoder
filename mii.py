@@ -1,4 +1,4 @@
-from mappings import PreferredPet
+from mappings import Outfit, PreferredPet
 
 
 class Mii:
@@ -36,6 +36,7 @@ class Mii:
         self.setNumberCrossedWith()
         self.setStreetPassHits()
         self.setPlazaPopulation()
+        self.setOutfit()
         self.setPreferredPet()
 
     def setName(self) -> None:
@@ -184,6 +185,28 @@ class Mii:
             self.bytesData[222:224], byteorder="little"
         )
 
+    def setOutfit(self) -> None:
+        """
+        Set the outfit from byte 224.
+
+        Args:
+            - None
+
+        Returns:
+            - None
+        """
+        self.outfit = Outfit(self.bytesData[224]).getOutfit()
+        if self.outfit == "Unknown Outfit":
+            print(
+                "Please, make a pull request with a single commit that adds the missing outfits."
+            )
+            print(
+                f"Name: {self.name}",
+                f"Creator: {self.creator}",
+                f"Times crossed with you: {self.nCrossedWith}",
+                f"Outfit number: {self.bytesData[224]}",
+            )
+
     def setPreferredPet(self) -> None:
         """
         Set the preferred pet from byte 225.
@@ -216,4 +239,5 @@ class Mii:
             "StreetPassHits": self.streetPassHits,
             "PlazaPopulation": self.plazaPopulation,
             "PreferredPet": self.preferredPet,
+            "Outfit": self.outfit,
         }
