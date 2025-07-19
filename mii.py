@@ -1,3 +1,6 @@
+from mappings import PreferredPet
+
+
 class Mii:
     MII_SIZE = 264
 
@@ -33,6 +36,7 @@ class Mii:
         self.setNumberCrossedWith()
         self.setStreetPassHits()
         self.setPlazaPopulation()
+        self.setPreferredPet()
 
     def setName(self) -> None:
         """
@@ -180,6 +184,18 @@ class Mii:
             self.bytesData[222:224], byteorder="little"
         )
 
+    def setPreferredPet(self) -> None:
+        """
+        Set the preferred pet from byte 225.
+
+        Args:
+            - None
+
+        Returns:
+            - None
+        """
+        self.preferredPet = PreferredPet(self.bytesData[225]).getPet()
+
     def getData(self) -> dict:
         """
         Get Mii data as a dictionary
@@ -199,4 +215,5 @@ class Mii:
             "NumberCrossedWith": self.nCrossedWith,
             "StreetPassHits": self.streetPassHits,
             "PlazaPopulation": self.plazaPopulation,
+            "PreferredPet": self.preferredPet,
         }
