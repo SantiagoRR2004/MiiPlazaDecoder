@@ -27,6 +27,7 @@ class Mii:
         """
         self.setName()
         self.setCreator()
+        self.setSoftware()
         self.setCountry()
         self.setSubregion()
 
@@ -76,6 +77,26 @@ class Mii:
             self.bytesData[46 : 46 + creatorEnd].decode("utf-16le").strip("\x00")
         )
 
+    def setSoftware(self) -> None:
+        """
+        Decode last software used from bytes 78-86
+
+        For some reason, the bytes are reversed,
+        so we reverse them to get the correct TitleID.
+
+        Args:
+            - None
+
+        Returns:
+            - None
+        """
+        TitleID = ""
+        for c in reversed(self.bytesData[78:86]):
+            TitleID += format(c, "02X")
+
+        self.gameID = TitleID
+
+
     def setCountry(self) -> None:
         """
         Decode country from bytes 86-149
@@ -113,6 +134,7 @@ class Mii:
         return {
             "Name": self.name,
             "Creator": self.creator,
+            "GameID": self.gameID,
             "Country": self.country,
             "Subregion": self.subregion,
         }
