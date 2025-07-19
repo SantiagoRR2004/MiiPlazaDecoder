@@ -111,8 +111,8 @@ class Mii:
             - dict: Dictionary containing all Mii attributes
         """
         return {
-            "name": self.name,
-            "creator": self.creator,
-            "country": self.country,
-            "subregion": self.subregion,
+            "Name": self.name,
+            "Creator": self.creator,
+            "Country": self.country,
+            "Subregion": self.subregion,
         }
