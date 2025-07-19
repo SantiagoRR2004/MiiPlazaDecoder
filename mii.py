@@ -96,7 +96,6 @@ class Mii:
 
         self.gameID = TitleID
 
-
     def setCountry(self) -> None:
         """
         Decode country from bytes 86-149
