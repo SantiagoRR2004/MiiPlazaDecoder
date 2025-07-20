@@ -78,3 +78,51 @@ class MiiPlaza:
         """
         data = [mii.getUnknownBits() for mii in self.miis]
         return pd.DataFrame(data)
+
+    def findPossibleBits(self, classifier: pd.DataFrame, nBits: int) -> list:
+        """
+        This is to help find where possible characteristics are
+        stored in the Mii data.
+
+        The classifier should have a column named 'Name',
+        another column named 'Creator',
+        and the final one to have the value of the characteristic.
+
+        We will find all the nBits bits that are together that
+        have different values for each of the values of the characteristic.
+
+        Args:
+            - classifier (pd.DataFrame): DataFrame containing classifier data
+            - nBits (int): Number of bits to find
+
+        Returns:
+            - list: List of possible bits
+        """
+        unknownBits = self.getMiiUnknownBits()
+        classifierName = [
+            col for col in classifier.columns if col not in ("Name", "Creator")
+        ][0]
+
+        combinedDf = classifier.merge(unknownBits, on=["Name", "Creator"], how="left")
+        combinedDf = combinedDf.drop(columns=["Name", "Creator"])
+
+        groupedDf = combinedDf.groupby(classifierName)
+        bitColumns = [col for col in combinedDf.columns if col != classifierName]
+
+        possibleBits = []
+
+        for i in range(len(bitColumns) - nBits + 1):
+            group = bitColumns[i : i + nBits]
+
+            # Check that the group is ascending and only 1 distance between bits
+            if max(group) - min(group) == nBits - 1:
+                groupBits = groupedDf[group]
+
+                # Check that all groups have only one unique value
+                if (groupBits.nunique() == 1).all().all():
+
+                    # Now we check that all groups have different values
+                    if (groupBits.nunique().nunique() == len(groupedDf)).all():
+                        possibleBits.append(group)
+
+        return possibleBits
