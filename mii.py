@@ -2,6 +2,35 @@ from mappings import Outfit, PreferredPet, Dream, Hobby
 
 
 class Mii:
+    """
+    Class representing a Mii object.
+
+    Not all the bytes have been decoded yet,
+    but here are some that might be missing:
+
+        - The type of dialogue box
+        There are 54 values so 6 bits are needed.
+
+        - The information from Mii Maker:
+        A mii is 62 bytes as in this url:
+        https://www.3dbrew.org/wiki/Mii
+        Because we can't fit in here all that data,
+        there must be an identifier that links to the CFL_DB.dat
+
+        - The date of last crossed with. It
+        needs to have from year to minutes.
+
+        - The text of the personal message.
+
+        - The gesture of the personal message.
+        There are 6 values so 3 bits are needed.
+
+        - Whether the mii has been VIP'd or not.
+        I couldn't find this one.
+
+        - Maybe some of the game records.
+    """
+
     MII_SIZE = 264
 
     unknownBytes = (

@@ -3,6 +3,13 @@ import mii
 
 
 class MiiPlaza:
+    """
+    There are more things that could be added here like
+    the puzzle pieces from:
+
+    https://www.reddit.com/r/3dshacks/comments/4c5rcp/streetpass_mii_plaza_puzzle_swap_unlock_all/
+    """
+
     MII_PLAZA_SIZE = 393216
 
     def __init__(self, bytesData: bytes) -> None:
