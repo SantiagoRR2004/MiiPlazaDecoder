@@ -40,6 +40,7 @@ class Mii:
         self.setPreferredPet()
         self.setDream()
         self.setHobby()
+        self.setPremium()
 
     def setName(self) -> None:
         """
@@ -245,6 +246,22 @@ class Mii:
         """
         self.hobby = Hobby(self.bytesData[227]).getHobby()
 
+    def setPremium(self) -> None:
+        """
+        Set the premium status from first
+        bit of byte 231.
+
+        If the bit is set, the Mii has paid
+        for the DLC.
+
+        Args:
+            - None
+
+        Returns:
+            - None
+        """
+        self.premium = bool((self.bytesData[231] >> 0) & 1)
+
     def getData(self) -> dict:
         """
         Get Mii data as a dictionary
@@ -268,4 +285,5 @@ class Mii:
             "Outfit": self.outfit,
             "Dream": self.dream,
             "Hobby": self.hobby,
+            "Premium": self.premium,
         }
