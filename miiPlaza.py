@@ -126,3 +126,27 @@ class MiiPlaza:
                         possibleBits.append(group)
 
         return possibleBits
+
+    def hexdump(self, width=16) -> str:
+        """
+        Get a hex dump of the Mii Plaza data
+
+        Args:
+            - None
+
+        Returns:
+            - str: Hex dump of the Mii Plaza data
+        """
+        toret = ""
+        for offset in range(0, len(self.bytesData), width):
+            chunk = self.bytesData[offset : offset + width]
+            hex_bytes = " ".join(f"{b:02X}" for b in chunk)
+            ascii_bytes = "".join((chr(b) if 32 <= b < 127 else ".") for b in chunk)
+
+            # Padding for shorter lines
+            hex_bytes = hex_bytes.ljust(width * 3)
+
+            line = f"{hex_bytes}\t{ascii_bytes}"
+            toret += line + "\n"
+
+        return toret

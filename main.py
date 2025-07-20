@@ -17,3 +17,6 @@ if __name__ == "__main__":
 
     with open("miisUnknownBits.csv", "w") as f:
         plaza.getMiiUnknownBits().to_csv(f, index=False)
+
+    with open("result.txt", "w", encoding="utf-8") as f:
+        f.write(plaza.hexdump())
