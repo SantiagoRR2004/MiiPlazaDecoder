@@ -65,3 +65,16 @@ class MiiPlaza:
         """
         data = [mii.getUnkownBytes() for mii in self.miis]
         return pd.DataFrame(data)
+
+    def getMiiUnknownBits(self) -> pd.DataFrame:
+        """
+        Get Mii unknown bits as a pandas DataFrame
+
+        Args:
+            - None
+
+        Returns:
+            - pd.DataFrame: DataFrame containing Mii names and unknown bits
+        """
+        data = [mii.getUnknownBits() for mii in self.miis]
+        return pd.DataFrame(data)

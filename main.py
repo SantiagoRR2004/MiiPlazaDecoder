@@ -12,5 +12,8 @@ if __name__ == "__main__":
         # We write the Mii data to a CSV file
         plaza.getMiiData().to_csv(f, index=False)
 
-    with open("miisUnknown.csv", "w") as f:
+    with open("miisUnknownBytes.csv", "w") as f:
         plaza.getMiiUnknownBytes().to_csv(f, index=False)
+
+    with open("miisUnknownBits.csv", "w") as f:
+        plaza.getMiiUnknownBits().to_csv(f, index=False)

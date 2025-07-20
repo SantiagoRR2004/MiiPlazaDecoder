@@ -12,6 +12,9 @@ class Mii:
         + list(range(228, MII_SIZE))
     )
 
+    unknownBits = [b * 8 + i for b in unknownBytes for i in range(8)]
+    unknownBits.remove(231 * 8) # Premium status
+
     def __init__(self, bytesData: bytes) -> None:
         """
         Initialize Mii object with bytes data
@@ -307,4 +310,19 @@ class Mii:
         """
         toret = {"Name": self.name, "Creator": self.creator}
         toret.update({i: self.bytesData[i] for i in self.unknownBytes})
+        return toret
+
+    def getUnknownBits(self) -> dict:
+        """
+        Get the unknown bits of the Mii
+
+        Args:
+            - None
+
+        Returns:
+            - dict: Dictionary of unknown bits
+        """
+        toret = {"Name": self.name, "Creator": self.creator}
+        for i in self.unknownBits:
+            toret[i] = (self.bytesData[i // 8] >> (i % 8)) & 1
         return toret
