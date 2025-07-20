@@ -2,3 +2,6 @@
 __pycache__
 *.dat
 *.csv
+
+# The hshop database file
+hshop.json
