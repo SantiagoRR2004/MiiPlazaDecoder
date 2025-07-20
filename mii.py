@@ -15,6 +15,18 @@ class Mii:
     unknownBits = [b * 8 + i for b in unknownBytes for i in range(8)]
     unknownBits.remove(231 * 8)  # Premium status
 
+    # The bytes that are always empty
+    emptyBytes = (
+        [39]
+        + [66, 67]
+        + [75, 76, 77]
+        + [216, 217]
+        + [221]
+        + [234, 235, 236, 237]
+        + [260, 261]
+    )
+    assert set(emptyBytes).issubset(set(unknownBytes)), "Not all emptyBytes are in unknownBytes"
+
     def __init__(self, bytesData: bytes) -> None:
         """
         Initialize Mii object with bytes data
@@ -28,6 +40,7 @@ class Mii:
         assert len(bytesData) == self.MII_SIZE, "Invalid Mii size"
         self.bytesData = bytesData
         self.setAll()
+        self.checkAssumptions()
 
     def setAll(self) -> None:
         """
@@ -271,6 +284,36 @@ class Mii:
             - None
         """
         self.premium = bool((self.bytesData[231] >> 0) & 1)
+
+    def checkAssumptions(self) -> None:
+        """
+        Check assumptions about the Mii data.
+
+        Args:
+            - None
+
+        Returns:
+            - None
+        """
+        self.checkEmptyBytes()
+
+    def checkEmptyBytes(self) -> None:
+        """
+        Check if all the empty bytes are indeed empty.
+
+        If they are not, please report it as an issue.
+        It means that there could be data stored in those bytes.
+
+        Args:
+            - None
+
+        Returns:
+            - None
+        """
+        for byte in self.emptyBytes:
+            assert (
+                self.bytesData[byte] == 0
+            ), f"Byte {byte} is not empty in Mii {self.name}"
 
     def getData(self) -> dict:
         """
