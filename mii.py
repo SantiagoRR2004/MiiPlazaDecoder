@@ -1,4 +1,4 @@
-from mappings import Outfit, PreferredPet, Dream, Hobby
+from mappings import Software, Outfit, PreferredPet, Dream, Hobby
 
 
 class Mii:
@@ -232,6 +232,7 @@ class Mii:
             TitleID += format(c, "02X")
 
         self.gameID = TitleID
+        self.gameName = Software(self.gameID).getGameName()
 
     def setCountry(self) -> None:
         """
@@ -452,6 +453,7 @@ class Mii:
             "Name": self.name,
             "Creator": self.creator,
             "GameID": self.gameID,
+            "GameName": self.gameName,
             "Country": self.country,
             "Subregion": self.subregion,
             "NumberCrossedWith": self.nCrossedWith,
