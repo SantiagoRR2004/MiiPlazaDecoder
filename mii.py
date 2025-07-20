@@ -13,7 +13,7 @@ class Mii:
     )
 
     unknownBits = [b * 8 + i for b in unknownBytes for i in range(8)]
-    unknownBits.remove(231 * 8) # Premium status
+    unknownBits.remove(231 * 8)  # Premium status
 
     def __init__(self, bytesData: bytes) -> None:
         """
