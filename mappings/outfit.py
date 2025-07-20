@@ -1,13 +1,14 @@
 class Outfit:
     """
     Here is the mapping of outfit numbers to their names.
-    
+
     In this url, we can see the name of all outfits with a picture:
     https://miiwiki.org/wiki/Outfit_(StreetPass_Mii_Plaza)
-    
+
     They are not in the same order because
     they seem to be ordered by the in-game release date.
     """
+
     decoder = {
         0: "(None)",
         1: "Mario's Cap",
