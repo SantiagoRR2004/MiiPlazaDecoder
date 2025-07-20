@@ -206,7 +206,6 @@ class Mii:
             print(
                 f"Name: {self.name}",
                 f"Creator: {self.creator}",
-                f"Times crossed with you: {self.nCrossedWith}",
                 f"Outfit number: {self.bytesData[224]}",
             )
 
