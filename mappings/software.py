@@ -44,6 +44,7 @@ def updateDatabase(filePath: str, gameName: str, gameID: str) -> None:
 class Software:
     currentDirectory = os.path.dirname(os.path.abspath(__file__))
     databaseFile = os.path.join(currentDirectory, "hshop.json")
+    personalDatabaseFile = os.path.join(currentDirectory, "software.json")
 
     # Ensure the database file exists
     if not os.path.exists(databaseFile):
@@ -51,6 +52,7 @@ class Software:
             json.dump({}, f, ensure_ascii=False, indent=4)
 
     decoder = json.load(open(databaseFile))
+    decoder.update(json.load(open(personalDatabaseFile)))
 
     def __init__(self, gameID: str) -> None:
         """
