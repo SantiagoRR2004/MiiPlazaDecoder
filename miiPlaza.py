@@ -52,3 +52,16 @@ class MiiPlaza:
         """
         data = [mii.getData() for mii in self.miis]
         return pd.DataFrame(data)
+
+    def getMiiUnknownBytes(self) -> pd.DataFrame:
+        """
+        Get Mii unknown bytes as a pandas DataFrame
+
+        Args:
+            - None
+
+        Returns:
+            - pd.DataFrame: DataFrame containing Mii names and unknown bytes
+        """
+        data = [mii.getUnkownBytes() for mii in self.miis]
+        return pd.DataFrame(data)

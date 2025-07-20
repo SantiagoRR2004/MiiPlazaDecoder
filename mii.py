@@ -4,6 +4,14 @@ from mappings import Outfit, PreferredPet, Dream, Hobby
 class Mii:
     MII_SIZE = 264
 
+    unknownBytes = (
+        list(range(20, 46))
+        + list(range(66, 78))
+        + [216, 217]
+        + [221]
+        + list(range(228, MII_SIZE))
+    )
+
     def __init__(self, bytesData: bytes) -> None:
         """
         Initialize Mii object with bytes data
@@ -286,3 +294,17 @@ class Mii:
             "Hobby": self.hobby,
             "Premium": self.premium,
         }
+
+    def getUnkownBytes(self) -> list:
+        """
+        Get the unknown bytes of the Mii
+
+        Args:
+            - None
+
+        Returns:
+            - list: List of unknown bytes
+        """
+        toret = {"Name": self.name, "Creator": self.creator}
+        toret.update({i: self.bytesData[i] for i in self.unknownBytes})
+        return toret
