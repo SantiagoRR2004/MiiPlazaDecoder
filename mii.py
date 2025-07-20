@@ -25,7 +25,9 @@ class Mii:
         + [234, 235, 236, 237]
         + [260, 261]
     )
-    assert set(emptyBytes).issubset(set(unknownBytes)), "Not all emptyBytes are in unknownBytes"
+    assert set(emptyBytes).issubset(
+        set(unknownBytes)
+    ), "Not all emptyBytes are in unknownBytes"
 
     def __init__(self, bytesData: bytes) -> None:
         """
