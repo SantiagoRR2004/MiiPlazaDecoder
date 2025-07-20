@@ -29,6 +29,77 @@ class Mii:
         set(unknownBytes)
     ), "Not all emptyBytes are in unknownBytes"
 
+    emptyBits = [
+        167,
+        175,
+        204,
+        205,
+        206,
+        207,
+        220,
+        227,
+        238,
+        239,
+        255,
+        270,
+        271,
+        286,
+        287,
+        335,
+        346,
+        361,
+        367,
+        1825,
+        1826,
+        1827,
+        1828,
+        1829,
+        1830,
+        1831,
+        1833,
+        1834,
+        1835,
+        1836,
+        1837,
+        1838,
+        1839,
+        1847,
+        1850,
+        1851,
+        1852,
+        1853,
+        1854,
+        1855,
+        1871,
+        1907,
+        1908,
+        1909,
+        1910,
+        1911,
+        1915,
+        1916,
+        1918,
+        1919,
+        1928,
+        1929,
+        1930,
+        1931,
+        1934,
+        1935,
+        2005,
+        2006,
+        2032,
+        2110,
+        2111,
+    ]
+    assert set(emptyBits).issubset(
+        set(unknownBits)
+    ), "Not all emptyBits are in unknownBits"
+    # Assert no overlap between bits in empty bytes and emptyBits
+    assert {byteIndex * 8 + i for byteIndex in emptyBytes for i in range(8)}.isdisjoint(
+        emptyBits
+    ), "Some bits in emptyBits fall inside emptyBytes"
+
     def __init__(self, bytesData: bytes) -> None:
         """
         Initialize Mii object with bytes data
@@ -298,6 +369,7 @@ class Mii:
             - None
         """
         self.checkEmptyBytes()
+        self.checkEmptyBits()
 
     def checkEmptyBytes(self) -> None:
         """
@@ -316,6 +388,26 @@ class Mii:
             assert (
                 self.bytesData[byte] == 0
             ), f"Byte {byte} is not empty in Mii {self.name}"
+
+    def checkEmptyBits(self) -> None:
+        """
+        Check if all the empty bits are indeed empty.
+
+        If they are not, please report it as an issue.
+        It means that there could be data stored in those bits.
+
+        Args:
+            - None
+
+        Returns:
+            - None
+        """
+        for bit in self.emptyBits:
+            byteIndex = bit // 8
+            bitIndex = bit % 8
+            assert (
+                self.bytesData[byteIndex] >> bitIndex
+            ) & 1 == 0, f"Bit {bit} is not empty in Mii {self.name}"
 
     def getData(self) -> dict:
         """
