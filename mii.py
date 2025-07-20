@@ -1,4 +1,4 @@
-from mappings import Outfit, PreferredPet
+from mappings import Outfit, PreferredPet, Dream
 
 
 class Mii:
@@ -38,6 +38,7 @@ class Mii:
         self.setPlazaPopulation()
         self.setOutfit()
         self.setPreferredPet()
+        self.setDream()
 
     def setName(self) -> None:
         """
@@ -219,6 +220,18 @@ class Mii:
         """
         self.preferredPet = PreferredPet(self.bytesData[225]).getPet()
 
+    def setDream(self) -> None:
+        """
+        Set the dream from byte 226.
+
+        Args:
+            - None
+
+        Returns:
+            - None
+        """
+        self.dream = Dream(self.bytesData[226]).getDream()
+
     def getData(self) -> dict:
         """
         Get Mii data as a dictionary
@@ -240,4 +253,5 @@ class Mii:
             "PlazaPopulation": self.plazaPopulation,
             "PreferredPet": self.preferredPet,
             "Outfit": self.outfit,
+            "Dream": self.dream,
         }
