@@ -233,7 +233,6 @@ class Mii:
         """
         self.dream = Dream(self.bytesData[226]).getDream()
 
-
     def setHobby(self) -> None:
         """
         Set the hobby from byte 227.
@@ -245,7 +244,6 @@ class Mii:
             - None
         """
         self.hobby = Hobby(self.bytesData[227]).getHobby()
-
 
     def getData(self) -> dict:
         """

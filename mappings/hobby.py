@@ -14,7 +14,7 @@ class Hobby:
         11: "Cooking",
         12: "Travelling",
         13: "The outdoors",
-        14 : "Fishing",
+        14: "Fishing",
         15: "Going for drives",
         16: "Shopping",
         17: "(Other)",
