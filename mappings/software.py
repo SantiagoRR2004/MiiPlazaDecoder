@@ -44,23 +44,24 @@ def updateDatabase(filePath: str, gameName: str, gameID: str) -> None:
 class Software:
     """
     Class to decode software/game names based on their string ID.
-    
+
     We use the hshop database to get the game names.
-    
+
     If the game isn't found in the hshop it means the game is
     probably a homebrew game or a system application.
     Here can be found some system applications:
         - https://www.3dbrew.org/wiki/Title_list
         - https://github.com/gamer-boss/3ds-system-files-cia-updates
-    
+
     We store those names in software.json.
 
     There is one one game I found that is has the wrong name:
         - 00040000000F9800 魔界王子 devils and realist - 代理王の秘宝
     It seems it is a real game, but the creators of
         - Fast PlayCoin - 300 coins NOW
-    gave their game the same ID.   
+    gave their game the same ID.
     """
+
     currentDirectory = os.path.dirname(os.path.abspath(__file__))
     databaseFile = os.path.join(currentDirectory, "hshop.json")
     personalDatabaseFile = os.path.join(currentDirectory, "software.json")
