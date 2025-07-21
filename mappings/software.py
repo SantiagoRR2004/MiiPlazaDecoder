@@ -51,6 +51,18 @@ class Software:
         with open(databaseFile, "w", encoding="utf-8") as f:
             json.dump({}, f, ensure_ascii=False, indent=4)
 
+    # Order software.json
+    with open(personalDatabaseFile, "r", encoding="utf-8") as fRead:
+        data = json.load(fRead)
+        with open(personalDatabaseFile, "w", encoding="utf-8") as fWrite:
+            json.dump(
+                dict(sorted(data.items())),
+                fWrite,
+                ensure_ascii=False,
+                indent=4,
+            )
+        del data
+
     decoder = json.load(open(databaseFile, encoding="utf-8"))
     decoder.update(json.load(open(personalDatabaseFile, encoding="utf-8")))
 
@@ -69,6 +81,7 @@ class Software:
             self.gameName = titleFromhshop(gameID)
             if self.gameName == "Unknown Game":
                 print(f"Invalid game ID: {gameID}")
+                self.decoder[gameID] = "Unknown Game"
             else:
                 updateDatabase(self.databaseFile, self.gameName, gameID)
                 self.decoder[gameID] = self.gameName
