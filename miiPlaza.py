@@ -110,7 +110,11 @@ class MiiPlaza:
             col for col in classifier.columns if col not in ("Name", "Creator")
         ][0]
 
-        combinedDf = classifier.merge(unknownBits, on=["Name", "Creator"], how="left")
+        # Normalize "Creator" in both dataframes
+        classifier["Creator"] = classifier["Creator"].fillna("")
+        unknownBits["Creator"] = unknownBits["Creator"].fillna("")
+
+        combinedDf = classifier.merge(unknownBits, on=["Name", "Creator"], how="inner")
         combinedDf = combinedDf.drop(columns=["Name", "Creator"])
 
         groupedDf = combinedDf.groupby(classifierName)
@@ -123,13 +127,25 @@ class MiiPlaza:
 
             # Check that the group is ascending and only 1 distance between bits
             if max(group) - min(group) == nBits - 1:
-                groupBits = groupedDf[group]
 
-                # Check that all groups have only one unique value
-                if (groupBits.nunique() == 1).all().all():
+                valid = True
+
+                for cl, group_df in groupedDf:
+                    groupBits = group_df[group]
+
+                    # Check that all Miis in cl have the same value
+                    # We find the opposite
+                    if (groupBits.nunique() != 1).any():
+                        valid = False
+                        break
+
+                if valid:
 
                     # Now we check that all groups have different values
-                    if (groupBits.nunique().nunique() == len(groupedDf)).all():
+                    patterns = (
+                        groupedDf[group].first().apply(lambda row: tuple(row), axis=1)
+                    )
+                    if patterns.is_unique:
                         possibleBits.append(group)
 
         return possibleBits
