@@ -51,8 +51,8 @@ class Software:
         with open(databaseFile, "w", encoding="utf-8") as f:
             json.dump({}, f, ensure_ascii=False, indent=4)
 
-    decoder = json.load(open(databaseFile))
-    decoder.update(json.load(open(personalDatabaseFile)))
+    decoder = json.load(open(databaseFile, encoding="utf-8"))
+    decoder.update(json.load(open(personalDatabaseFile, encoding="utf-8")))
 
     def __init__(self, gameID: str) -> None:
         """
