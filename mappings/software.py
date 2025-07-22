@@ -119,6 +119,71 @@ def updateDatabase(filePath: str, gameName: str, gameID: str) -> None:
         json.dump(data, f, ensure_ascii=False, indent=4)
 
 
+def getDSGames() -> dict:
+    """
+    Get the dictionary of DS games.
+
+    The hShop seems to have 3DS and DSiWare games,
+    but no DS games. Because we trust the hSHop more,
+    we only use this when we haven't found the game.
+
+    We keep the database downloaded.
+
+    In the future we could use the datomatic database
+    to make sure that the IDs of different regions point
+    to the english name of the game. The url is:
+    https://datomatic.no-intro.org/index.php?page=manager&s=28&download=8530
+
+    Args:
+        - None
+
+    Returns:
+        - dict: A dictionary with game IDs as keys and game names as values.
+    """
+    currentDirectory = os.path.dirname(os.path.abspath(__file__))
+    databaseFile = os.path.join(currentDirectory, "dstdb.json")
+
+    if not os.path.exists(databaseFile):
+        url = "https://www.gametdb.com/dstdb.txt?LANG=ORIG"
+        data = {}
+
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0 Safari/537.36"
+        }  # Pretend to be human
+        response = requests.get(url, headers=headers)
+
+        # Check if the request was successful
+        if response.status_code == 200:
+            textContent = response.text.strip()
+
+            # First line is not a game
+            games = textContent.split("\n")[1:]
+
+            for game in games:
+                asciiID, title = game.split(" = ")
+
+                # Clean the variables
+                asciiID = asciiID.strip()
+                title = title.strip()
+
+                # All DS games begin with 00048000 or 0048004
+                # so we will need to check it later
+                hexID = asciiID.encode("utf-8").hex().upper()
+
+                data[hexID] = title
+
+            # Sort by ID
+            data = dict(sorted(data.items()))
+
+            with open(databaseFile, "w", encoding="utf-8") as f:
+                json.dump(data, f, ensure_ascii=False, indent=4)
+
+        else:
+            print(f"Failed to fetch file: {response.status_code}")
+
+    return json.load(open(databaseFile, encoding="utf-8"))
+
+
 class Software:
     """
     Class to decode software/game names based on their string ID.
@@ -163,6 +228,7 @@ class Software:
 
     decoder = json.load(open(databaseFile, encoding="utf-8"))
     decoder.update(json.load(open(personalDatabaseFile, encoding="utf-8")))
+    decoderDS = getDSGames()
 
     def __init__(self, gameID: str) -> None:
         """
@@ -178,8 +244,12 @@ class Software:
         if self.gameName is None:
             self.gameName = titleFromhshop(gameID)
             if self.gameName == "Unknown Game":
-                print(f"Invalid game ID: {gameID}")
-                self.decoder[gameID] = "Unknown Game"
+                self.gameName = self.decoderDS.get(gameID[-8:], "Unknown Game")
+                if self.gameName == "Unknown Game":
+                    print(f"Unknown game ID: {gameID}")
+                    self.decoder[gameID] = "Unknown Game"
+                else:
+                    self.decoder[gameID] = self.gameName
             else:
                 updateDatabase(self.databaseFile, self.gameName, gameID)
                 self.decoder[gameID] = self.gameName
