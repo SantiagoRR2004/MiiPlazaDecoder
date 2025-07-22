@@ -1,5 +1,9 @@
 import pandas as pd
 import mii
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import tkinter as tk
+from tkinter import Scrollbar, Canvas
 
 
 class MiiPlaza:
@@ -173,3 +177,84 @@ class MiiPlaza:
             toret += line + "\n"
 
         return toret
+
+    def graphPieChart(self, column: str) -> None:
+        # Think about using widgets
+        miiDf = self.getMiiData()
+
+        valueCounts = miiDf[column].value_counts()
+        labels = valueCounts.index
+        sizes = valueCounts.values
+        total = sum(sizes)
+
+        threshold = 2
+
+        def autopct_format(pct):
+            return f"{pct:.1f}%" if pct >= threshold else ""
+
+        final_labels = [
+            label if (size / total * 100) >= threshold else ""
+            for label, size in zip(labels, sizes)
+        ]
+
+        # Plot figure
+        fig, ax = plt.subplots(figsize=(6, 6))
+        wedges, texts, autotexts = ax.pie(
+            sizes,
+            labels=final_labels,
+            autopct=autopct_format,
+            startangle=0,
+            shadow=False,
+            textprops={"fontname": "SimSun"},
+        )
+
+        legend_labels = [
+            f"{label}: {size} ({size / total * 100:.1f}%)"
+            for label, size in zip(labels, sizes)
+        ]
+
+        ax.set_title(f"Distribution of {column}")
+
+        # Tkinter window
+        root = tk.Tk()
+        root.wm_title("Scrollable Legend Pie Chart")
+
+        # Matplotlib canvas
+        canvas = FigureCanvasTkAgg(fig, master=root)
+        canvas.draw()
+        canvas.get_tk_widget().pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
+
+        # Frame for scrollbar and legend text
+        frame = tk.Frame(root)
+        frame.pack(side=tk.RIGHT, fill=tk.Y)
+
+        # Create a scrollbar and a canvas to hold the legend labels
+        scrollbar = tk.Scrollbar(frame, orient=tk.VERTICAL)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+        legend_canvas = tk.Canvas(
+            frame, width=200, height=400, yscrollcommand=scrollbar.set
+        )
+        legend_canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
+        scrollbar.config(command=legend_canvas.yview)
+
+        # Create a frame inside the canvas to hold labels
+        labels_frame = tk.Frame(legend_canvas)
+        legend_canvas.create_window((0, 0), window=labels_frame, anchor="nw")
+
+        # Add legend entries as labels inside labels_frame
+        for i, text in enumerate(legend_labels):
+            lbl = tk.Label(labels_frame, text=text, font=("SimSun", 9), anchor="w")
+            lbl.pack(fill=tk.X, padx=5, pady=2)
+
+        # Update scrollregion when all widgets are in place
+        labels_frame.update_idletasks()
+        legend_canvas.config(scrollregion=legend_canvas.bbox("all"))
+
+        # Bind mousewheel to scroll the legend_canvas
+        def _on_mousewheel(event):
+            legend_canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+
+        legend_canvas.bind_all("<MouseWheel>", _on_mousewheel)
+
+        root.mainloop()
