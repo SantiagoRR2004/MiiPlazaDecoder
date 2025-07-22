@@ -5,3 +5,6 @@ __pycache__
 
 # The hshop database file
 hshop.json
+
+# The hexdump output file
+result.txt
