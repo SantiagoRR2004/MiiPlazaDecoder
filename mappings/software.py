@@ -240,6 +240,7 @@ class Software:
         Returns:
             - str: The name of the game.
         """
+        assert len(gameID) == 16
         self.gameName = self.decoder.get(gameID, None)
         if self.gameName is None:
             self.gameName = titleFromhshop(gameID)
