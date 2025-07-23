@@ -62,6 +62,9 @@
       "label": "Format Code with Black",
       "type": "shell",
       "command": "${workspaceFolder}/.venv/bin/python3",
+      "windows": {
+        "command": "${workspaceFolder}\\.venv\\Scripts\\python.exe"
+      },
       "args": ["-m", "black", "."],
       "group": {
         "kind": "build",
