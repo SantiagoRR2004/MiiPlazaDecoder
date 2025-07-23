@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import tkinter as tk
 from tkinter import Scrollbar, Canvas
+from matplotlib.patches import Circle
+import numpy as np
 import sys
 
 
@@ -211,6 +213,7 @@ class MiiPlaza:
 
         # Plot figure
         fig, ax = plt.subplots(figsize=(6, 6))
+
         wedges, texts, autotexts = ax.pie(
             sizes,
             labels=final_labels,
@@ -220,12 +223,33 @@ class MiiPlaza:
             textprops={"fontname": "SimSun"},
         )
 
+        # Calculate cumulative angles for boundaries between wedges
+        cumulative = np.cumsum([0] + sizes) / total * 360
+
+        # Draw black lines between wedges (edges)
+        for i in range(len(sizes)):
+            if sizes[i] != sizes[(i + 1) % len(sizes)]:
+                angle = cumulative[i]  # boundary after wedge i
+                theta = np.deg2rad(angle)
+                r = 1
+                ax.plot(
+                    [0, r * np.cos(theta)],
+                    [0, r * np.sin(theta)],
+                    color="black",
+                    linewidth=1.5,
+                )
+
+        # Add a black circular border around the pie chart
+        circle = Circle((0, 0), 1, edgecolor="black", facecolor="none", linewidth=1.5)
+        ax.add_patch(circle)
+
         legend_labels = [
             f"{label}: {size} ({size / total * 100:.1f}%)"
             for label, size in zip(labels, sizes)
         ]
 
         ax.set_title(f"Distribution of {column}")
+        ax.set_aspect("equal")
 
         # Tkinter window
         root = tk.Tk()
@@ -256,7 +280,7 @@ class MiiPlaza:
         legend_canvas.create_window((0, 0), window=labels_frame, anchor="nw")
 
         # Add legend entries as labels inside labels_frame
-        for i, text in enumerate(legend_labels):
+        for idx, text in enumerate(legend_labels):
             lbl = tk.Label(labels_frame, text=text, font=("SimSun", 9), anchor="w")
             lbl.pack(fill=tk.X, padx=5, pady=2)
 
