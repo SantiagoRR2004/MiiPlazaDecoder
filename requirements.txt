@@ -3,3 +3,6 @@ pandas
 bs4
 requests
 matplotlib
+selenium
+webdriver_manager
+platformdirs

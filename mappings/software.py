@@ -1,6 +1,14 @@
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+import xml.etree.ElementTree as ET
+from selenium import webdriver
 from bs4 import BeautifulSoup
+import platformdirs
 import requests
+import zipfile
 import json
+import time
 import os
 
 
@@ -119,6 +127,113 @@ def updateDatabase(filePath: str, gameName: str, gameID: str) -> None:
         json.dump(data, f, ensure_ascii=False, indent=4)
 
 
+def getDatomatic() -> dict:
+    """
+    Get the dictionary of DS games from the datomatic database.
+
+    The datomatic database is used to link the game IDs
+    to the ID of the game in English.
+
+    This database is not used directly because the names
+    have the region in them.
+
+    There might be more games here than in the dstdb.
+
+    Args:
+        - None
+
+    Returns:
+        - dict: A dictionary with game IDs as keys and original game IDs as values.
+    """
+    url = "https://datomatic.no-intro.org/index.php?page=download&op=dat&s=28"
+
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument("--headless")
+    chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    chrome_options.add_experimental_option("useAutomationExtension", False)
+    chrome_options.add_argument("--disable-blink-features=AutomationControlled")
+    service = Service(ChromeDriverManager().install())
+    driver = webdriver.Chrome(options=chrome_options, service=service)
+
+    driver.get(url)
+
+    # Wait for it to load
+    time.sleep(4)
+
+    # Find and click the "Prepare" button
+    button = driver.find_element(
+        By.XPATH, "//input[@type='submit' and @value='Prepare']"
+    )
+    button.click()
+
+    # Wait for redirection or further action
+    time.sleep(5)
+
+    button = driver.find_element(
+        By.XPATH, "//input[@type='submit' and @value='Download!!']"
+    )
+    button.click()
+
+    time.sleep(3)
+
+    # Close the browser
+    driver.quit()
+
+    downloadsPath = platformdirs.user_downloads_dir()
+    filePath = os.path.join(
+        downloadsPath,
+        "Nintendo - Nintendo DS (Decrypted) (20250721-143924).zip",
+    )
+
+    # Read the only file inside the ZIP
+    with zipfile.ZipFile(filePath, "r") as zip_ref:
+        file_names = zip_ref.namelist()
+
+        if len(file_names) != 1:
+            raise ValueError("Expected exactly one file in the ZIP archive.")
+
+        internal_file_name = file_names[0]
+
+        # Read the file's data (as bytes)
+        data = zip_ref.read(internal_file_name)
+
+    # Delete the ZIP file
+    os.remove(filePath)
+
+    root = ET.fromstring(data.decode("utf-8"))
+
+    nameChanger = {}
+
+    idMap = {
+        child.attrib["id"]: child
+        for child in root
+        if child.tag == "game" and "id" in child.attrib
+    }
+
+    for child in root:
+        if child.tag == "game":
+            if child.attrib.get("cloneofid"):
+
+                serial = child.find("rom").get("serial")
+
+                if serial:
+
+                    currentID = serial.encode("utf-8").hex().upper()
+
+                    ogID = (
+                        idMap[child.attrib["cloneofid"]]
+                        .find("rom")
+                        .get("serial")
+                        .encode("utf-8")
+                        .hex()
+                        .upper()
+                    )
+
+                nameChanger[currentID] = ogID
+
+    return nameChanger
+
+
 def getDSGames() -> dict:
     """
     Get the dictionary of DS games.
@@ -128,11 +243,6 @@ def getDSGames() -> dict:
     we only use this when we haven't found the game.
 
     We keep the database downloaded.
-
-    In the future we could use the datomatic database
-    to make sure that the IDs of different regions point
-    to the english name of the game. The url is:
-    https://datomatic.no-intro.org/index.php?page=manager&s=28&download=8530
 
     Args:
         - None
@@ -171,6 +281,11 @@ def getDSGames() -> dict:
                 hexID = asciiID.encode("utf-8").hex().upper()
 
                 data[hexID] = title
+
+            # Standardize names
+            for key, value in getDatomatic().items():
+                if data.get(key):
+                    data[key] = data[value]
 
             # Sort by ID
             data = dict(sorted(data.items()))
