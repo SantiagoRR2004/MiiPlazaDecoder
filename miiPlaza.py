@@ -182,12 +182,18 @@ class MiiPlaza:
     def graphPieChart(self, column: str) -> None:
         miiDf = self.getMiiData()
 
-        valueCounts = miiDf[column].value_counts()
-        labels = valueCounts.index
-        sizes = valueCounts.values
+        valueCounts = miiDf[column].value_counts().reset_index()
+        valueCounts.columns = [column, "count"]
+
+        # Sort by count (descending) and then by value (ascending)
+        valueCounts = valueCounts.sort_values(
+            by=["count", column], ascending=[False, True]
+        )
+
+        labels = valueCounts[column].values
+        sizes = valueCounts["count"].values
         total = sum(sizes)
 
-        # Function to handle closing the Tkinter window
         def on_closing():
             plt.close("all")
             root.destroy()
