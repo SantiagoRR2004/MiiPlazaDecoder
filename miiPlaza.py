@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import tkinter as tk
 from tkinter import Scrollbar, Canvas
+import sys
 
 
 class MiiPlaza:
@@ -179,13 +180,18 @@ class MiiPlaza:
         return toret
 
     def graphPieChart(self, column: str) -> None:
-        # Think about using widgets
         miiDf = self.getMiiData()
 
         valueCounts = miiDf[column].value_counts()
         labels = valueCounts.index
         sizes = valueCounts.values
         total = sum(sizes)
+
+        # Function to handle closing the Tkinter window
+        def on_closing():
+            plt.close("all")
+            root.destroy()
+            sys.exit()
 
         threshold = 2
 
@@ -218,6 +224,7 @@ class MiiPlaza:
         # Tkinter window
         root = tk.Tk()
         root.wm_title("Scrollable Legend Pie Chart")
+        root.protocol("WM_DELETE_WINDOW", on_closing)
 
         # Matplotlib canvas
         canvas = FigureCanvasTkAgg(fig, master=root)
