@@ -103,6 +103,33 @@ def titleFromhshop(gameID: str) -> str:
     return "Unknown Game"
 
 
+def getDatabase(filePath: str) -> dict:
+    """
+    Get the database from the given file path.
+
+    Args:
+        - filePath (str): The path to the database file.
+
+    Returns:
+        - dict: The database as a dictionary.
+    """
+    # Ensure it exists
+    if not os.path.exists(filePath):
+        with open(filePath, "w", encoding="utf-8") as f:
+            json.dump({}, f, ensure_ascii=False, indent=4)
+
+    with open(filePath, "r", encoding="utf-8") as fRead:
+        data = json.load(fRead)
+
+    # Sort the data by keys
+    data = dict(sorted(data.items()))
+
+    with open(filePath, "w", encoding="utf-8") as fWrite:
+        json.dump(data, fWrite, ensure_ascii=False, indent=4)
+
+    return data
+
+
 def updateDatabase(filePath: str, gameName: str, gameID: str) -> None:
     """
     Update the hshop database with a new game name.
@@ -296,22 +323,35 @@ def getDSGames() -> dict:
         else:
             print(f"Failed to fetch file: {response.status_code}")
 
-    return json.load(open(databaseFile, encoding="utf-8"))
+    return getDatabase(databaseFile)
 
 
 class Software:
     """
     Class to decode software/game names based on their string ID.
 
-    We use the hshop database to get the game names.
+    We use 4 databases:
 
-    If the game isn't found in the hshop it means the game is
-    probably a homebrew game or a system application.
-    Here can be found some system applications:
-        - https://www.3dbrew.org/wiki/Title_list
-        - https://github.com/gamer-boss/3ds-system-files-cia-updates
+        - hshop.json
+            Stores the games already searched for in the hShop.
+            If the game isn't found in the hshop it means the game is
+            probably a homebrew game, a system application or a DS game
+            Here can be found some system applications:
+                - https://www.3dbrew.org/wiki/Title_list
+                - https://github.com/gamer-boss/3ds-system-files-cia-updates
 
-    We store those names in software.json.
+        - dstdb.json
+            Stores all DS games. Less trusted than hshop so it is
+            only used as a last resort.
+
+        - dsLocal.json
+            Stores software that couldn't be found on the hShop
+            and found on dstdb. We store them so we don't try to
+            search hShop again.
+
+        - software.json
+            Stores software not found anywhere else.
+            They tend to be system applications and homebrew.
 
     There is one one game I found that is has the wrong name:
         - 00040000000F9800 魔界王子 devils and realist - 代理王の秘宝
@@ -323,26 +363,11 @@ class Software:
     currentDirectory = os.path.dirname(os.path.abspath(__file__))
     databaseFile = os.path.join(currentDirectory, "hshop.json")
     personalDatabaseFile = os.path.join(currentDirectory, "software.json")
+    localDSFile = os.path.join(currentDirectory, "dsLocal.json")
 
-    # Ensure the database file exists
-    if not os.path.exists(databaseFile):
-        with open(databaseFile, "w", encoding="utf-8") as f:
-            json.dump({}, f, ensure_ascii=False, indent=4)
-
-    # Order software.json
-    with open(personalDatabaseFile, "r", encoding="utf-8") as fRead:
-        data = json.load(fRead)
-        with open(personalDatabaseFile, "w", encoding="utf-8") as fWrite:
-            json.dump(
-                dict(sorted(data.items())),
-                fWrite,
-                ensure_ascii=False,
-                indent=4,
-            )
-        del data
-
-    decoder = json.load(open(databaseFile, encoding="utf-8"))
-    decoder.update(json.load(open(personalDatabaseFile, encoding="utf-8")))
+    decoder = getDatabase(databaseFile)
+    decoder.update(getDatabase(personalDatabaseFile))
+    decoder.update(getDatabase(localDSFile))
     decoderDS = getDSGames()
 
     def __init__(self, gameID: str) -> None:
@@ -358,17 +383,23 @@ class Software:
         assert len(gameID) == 16
         self.gameName = self.decoder.get(gameID, None)
         if self.gameName is None:
+
+            # Try to find it in the hShop
             self.gameName = titleFromhshop(gameID)
+
             if self.gameName == "Unknown Game":
+
+                # Try to find in dstbd
                 self.gameName = self.decoderDS.get(gameID[-8:], "Unknown Game")
                 if self.gameName == "Unknown Game":
                     print(f"Unknown game ID: {gameID}")
-                    self.decoder[gameID] = "Unknown Game"
                 else:
-                    self.decoder[gameID] = self.gameName
+                    updateDatabase(self.localDSFile, self.gameName, gameID)
+
             else:
                 updateDatabase(self.databaseFile, self.gameName, gameID)
-                self.decoder[gameID] = self.gameName
+
+            self.decoder[gameID] = self.gameName
 
     def getGameName(self) -> str:
         """
