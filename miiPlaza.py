@@ -253,6 +253,7 @@ class MiiPlaza:
 
         # Tkinter window
         root = tk.Tk()
+        root.geometry("400x400")
         root.wm_title("Scrollable Legend Pie Chart")
         root.protocol("WM_DELETE_WINDOW", on_closing)
 
@@ -293,5 +294,11 @@ class MiiPlaza:
             legend_canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
 
         legend_canvas.bind_all("<MouseWheel>", _on_mousewheel)
+
+        # Dinamically change the size
+        root.update_idletasks()
+        width = root.winfo_reqwidth()
+        height = root.winfo_reqheight()
+        root.geometry(f"{width}x{height}")
 
         root.mainloop()
