@@ -243,11 +243,6 @@ class MiiPlaza:
         circle = Circle((0, 0), 1, edgecolor="black", facecolor="none", linewidth=1.5)
         ax.add_patch(circle)
 
-        legend_labels = [
-            f"{label}: {size} ({size / total * 100:.1f}%)"
-            for label, size in zip(labels, sizes)
-        ]
-
         ax.set_title(f"Distribution of {column}")
         ax.set_aspect("equal")
 
@@ -281,9 +276,15 @@ class MiiPlaza:
         legend_canvas.create_window((0, 0), window=labels_frame, anchor="nw")
 
         # Add legend entries as labels inside labels_frame
-        for idx, text in enumerate(legend_labels):
-            lbl = tk.Label(labels_frame, text=text, font=("SimSun", 9), anchor="w")
-            lbl.pack(fill=tk.X, padx=5, pady=2)
+        for idx, (label, size) in enumerate(zip(labels, sizes)):
+            lbl_label = tk.Label(
+                labels_frame, text=label, font=("SimSun", 9), anchor="w"
+            )
+            lbl_size = tk.Label(
+                labels_frame, text=str(size), font=("SimSun", 9), anchor="e"
+            )
+            lbl_label.grid(row=idx, column=0, sticky="w", padx=5, pady=2)
+            lbl_size.grid(row=idx, column=1, sticky="ew", padx=5, pady=2)
 
         # Update scrollregion when all widgets are in place
         labels_frame.update_idletasks()
