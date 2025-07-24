@@ -296,7 +296,9 @@ class MiiPlaza:
 
         # Create a frame inside the canvas to hold labels
         labels_frame = tk.Frame(legend_canvas)
-        legend_canvas.create_window((0, 0), window=labels_frame, anchor="nw")
+        canvas_window = legend_canvas.create_window(
+            (0, 0), window=labels_frame, anchor="nw"
+        )
 
         labels_frame.grid_columnconfigure(0, weight=1)
         labels_frame.grid_columnconfigure(1, weight=1)
@@ -320,7 +322,18 @@ class MiiPlaza:
         def _on_mousewheel(event):
             legend_canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
 
+        def on_frame_configure(event):
+            # Update scrollregion after resizing the labels_frame
+            legend_canvas.configure(scrollregion=legend_canvas.bbox("all"))
+
+        def on_canvas_configure(event):
+            # Make sure labels_frame width fits the canvas width
+            canvas_width = event.width
+            legend_canvas.itemconfig(canvas_window, width=canvas_width)
+
         legend_canvas.bind_all("<MouseWheel>", _on_mousewheel)
+        labels_frame.bind("<Configure>", on_frame_configure)
+        legend_canvas.bind("<Configure>", on_canvas_configure)
 
         # Dinamically change the size
         root.update_idletasks()
