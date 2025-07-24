@@ -276,7 +276,7 @@ class Mii:
         if self.nCrossedWith > 35:
             print(
                 "Warning: Number of times crossed with this Mii is greater than 35. "
-                f"Check if this value is accurate. {self.name} has been crossed {self.nCrossedWith} times."
+                f"Check if this value is accurate. {self.name} has been crossed {self.nCrossedWith} times. "
                 "Please report this as an issue to the repository."
             )
 
