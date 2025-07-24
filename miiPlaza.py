@@ -5,6 +5,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import tkinter as tk
 from tkinter import Scrollbar, Canvas
 from matplotlib.patches import Circle
+import tkinter.font as tkfont
 import numpy as np
 import sys
 
@@ -252,6 +253,28 @@ class MiiPlaza:
         root.wm_title("Scrollable Legend Pie Chart")
         root.protocol("WM_DELETE_WINDOW", on_closing)
 
+        # Create hidden window to measure content
+        hidden_win = tk.Toplevel(root)
+        hidden_win.withdraw()  # Hide it
+
+        temp_frame = tk.Frame(hidden_win)
+        temp_frame.pack()
+
+        # Create labels in temp_frame
+        test_font = tkfont.Font(family="SimHei", size=9)
+
+        for idx, (label, size) in enumerate(zip(labels, sizes)):
+            lbl_label = tk.Label(temp_frame, text=label, font=test_font, anchor="w")
+            lbl_size = tk.Label(temp_frame, text=str(size), font=test_font, anchor="e")
+            lbl_label.grid(row=idx, column=0, sticky="w", padx=5, pady=2)
+            lbl_size.grid(row=idx, column=1, sticky="e", padx=5, pady=2)
+
+        temp_frame.update_idletasks()
+        needed_width = temp_frame.winfo_reqwidth()
+
+        # Clean up
+        hidden_win.destroy()
+
         # Matplotlib canvas
         canvas = FigureCanvasTkAgg(fig, master=root)
         canvas.draw()
@@ -266,7 +289,7 @@ class MiiPlaza:
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
         legend_canvas = tk.Canvas(
-            frame, width=200, height=400, yscrollcommand=scrollbar.set
+            frame, width=needed_width, height=400, yscrollcommand=scrollbar.set
         )
         legend_canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
         scrollbar.config(command=legend_canvas.yview)
