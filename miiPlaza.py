@@ -291,12 +291,15 @@ class MiiPlaza:
         legend_canvas = tk.Canvas(
             frame, width=needed_width, height=400, yscrollcommand=scrollbar.set
         )
-        legend_canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
+        legend_canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         scrollbar.config(command=legend_canvas.yview)
 
         # Create a frame inside the canvas to hold labels
         labels_frame = tk.Frame(legend_canvas)
         legend_canvas.create_window((0, 0), window=labels_frame, anchor="nw")
+
+        labels_frame.grid_columnconfigure(0, weight=1)
+        labels_frame.grid_columnconfigure(1, weight=1)
 
         # Add legend entries as labels inside labels_frame
         for idx, (label, size) in enumerate(zip(labels, sizes)):
