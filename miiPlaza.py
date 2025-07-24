@@ -322,6 +322,12 @@ class MiiPlaza:
         def _on_mousewheel(event):
             legend_canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
 
+        def _on_mousewheel_linux(event):
+            if event.num == 4:
+                legend_canvas.yview_scroll(-1, "units")
+            elif event.num == 5:
+                legend_canvas.yview_scroll(1, "units")
+
         def on_frame_configure(event):
             # Update scrollregion after resizing the labels_frame
             legend_canvas.configure(scrollregion=legend_canvas.bbox("all"))
@@ -331,7 +337,10 @@ class MiiPlaza:
             canvas_width = event.width
             legend_canvas.itemconfig(canvas_window, width=canvas_width)
 
-        legend_canvas.bind_all("<MouseWheel>", _on_mousewheel)
+        # Bind mousewheel events for both Windows and Linux
+        legend_canvas.bind_all("<MouseWheel>", _on_mousewheel)  # Windows
+        legend_canvas.bind_all("<Button-4>", _on_mousewheel_linux)  # Linux scroll up
+        legend_canvas.bind_all("<Button-5>", _on_mousewheel_linux)  # Linux scroll down
         labels_frame.bind("<Configure>", on_frame_configure)
         legend_canvas.bind("<Configure>", on_canvas_configure)
 
