@@ -308,7 +308,7 @@ class MiiPlaza:
         max_size_width = max(test_font.measure(str(size)) for size in sizes)
 
         needed_width = (
-            max_label_width + max_size_width + (2 * 10)
+            max_label_width + max_size_width + (4 * 10)
         )  # Add padding manually
 
         # Matplotlib canvas
@@ -384,7 +384,7 @@ class MiiPlaza:
                 bg=hex_color,
             )
             lbl_label.grid(row=0, column=0, sticky="w", padx=5, pady=2)
-            lbl_size.grid(row=0, column=1, sticky="ew", padx=5, pady=2)
+            lbl_size.grid(row=0, column=1, sticky="ew", padx=(5, 5), pady=2)
 
         # Update scrollregion when all widgets are in place
         labels_frame.update_idletasks()
