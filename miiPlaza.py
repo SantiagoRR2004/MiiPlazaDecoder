@@ -261,7 +261,7 @@ class MiiPlaza:
         temp_frame.pack()
 
         # Create labels in temp_frame
-        test_font = tkfont.Font(family="SimHei", size=9)
+        test_font = tkfont.Font(family="DejaVu Sans", size=9)
 
         for idx, (label, size) in enumerate(zip(labels, sizes)):
             lbl_label = tk.Label(temp_frame, text=label, font=test_font, anchor="w")
@@ -331,10 +331,10 @@ class MiiPlaza:
         # Add legend entries as labels inside labels_frame
         for idx, (label, size) in enumerate(zip(labels, sizes)):
             lbl_label = tk.Label(
-                labels_frame, text=label, font=("SimSun", 9), anchor="w"
+                labels_frame, text=label, font=("DejaVu Sans", 9), anchor="w"
             )
             lbl_size = tk.Label(
-                labels_frame, text=str(size), font=("SimSun", 9), anchor="e"
+                labels_frame, text=str(size), font=("DejaVu Sans", 9), anchor="e"
             )
             lbl_label.grid(row=idx, column=0, sticky="w", padx=5, pady=2)
             lbl_size.grid(row=idx, column=1, sticky="ew", padx=5, pady=2)
