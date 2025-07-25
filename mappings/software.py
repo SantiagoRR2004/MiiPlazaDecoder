@@ -9,6 +9,7 @@ import requests
 import zipfile
 import json
 import time
+import glob
 import os
 
 
@@ -201,16 +202,23 @@ def getDatomatic() -> dict:
     )
     button.click()
 
-    time.sleep(3)
+    # Wait for the download to end
+    time.sleep(5)
 
     # Close the browser
     driver.quit()
 
     downloadsPath = platformdirs.user_downloads_dir()
-    filePath = os.path.join(
-        downloadsPath,
-        "Nintendo - Nintendo DS (Decrypted) (20250721-143924).zip",
-    )
+
+    # Find the most recent Nintendo DS database file
+    pattern = os.path.join(downloadsPath, "Nintendo - Nintendo DS (Decrypted) (*).zip")
+    matching_files = glob.glob(pattern)
+
+    if not matching_files:
+        raise FileNotFoundError("No Nintendo DS database file found in downloads")
+
+    # Get the most recent file based on modification time
+    filePath = max(matching_files, key=os.path.getmtime)
 
     # Read the only file inside the ZIP
     with zipfile.ZipFile(filePath, "r") as zip_ref:
