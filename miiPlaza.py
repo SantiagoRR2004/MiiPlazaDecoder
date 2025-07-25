@@ -302,23 +302,14 @@ class MiiPlaza:
         hidden_win = tk.Toplevel(root)
         hidden_win.withdraw()  # Hide it
 
-        temp_frame = tk.Frame(hidden_win)
-        temp_frame.pack()
-
-        # Create labels in temp_frame
+        # Find widest label and size
         test_font = tkfont.Font(family=best_font, size=9)
+        max_label_width = max(test_font.measure(label) for label in labels)
+        max_size_width = max(test_font.measure(str(size)) for size in sizes)
 
-        for idx, (label, size) in enumerate(zip(labels, sizes)):
-            lbl_label = tk.Label(temp_frame, text=label, font=test_font, anchor="w")
-            lbl_size = tk.Label(temp_frame, text=str(size), font=test_font, anchor="e")
-            lbl_label.grid(row=idx, column=0, sticky="w", padx=5, pady=2)
-            lbl_size.grid(row=idx, column=1, sticky="ew", padx=5, pady=2)
-
-        temp_frame.update_idletasks()
-        needed_width = temp_frame.winfo_reqwidth()
-
-        # Clean up
-        hidden_win.destroy()
+        needed_width = (
+            max_label_width + max_size_width + (2 * 10)
+        )  # Add padding manually
 
         # Matplotlib canvas
         canvas = FigureCanvasTkAgg(fig, master=root)
@@ -369,9 +360,6 @@ class MiiPlaza:
         canvas_window = legend_canvas.create_window(
             (0, 0), window=labels_frame, anchor="nw"
         )
-
-        labels_frame.grid_columnconfigure(0, weight=1)
-        labels_frame.grid_columnconfigure(1, weight=1)
 
         # Add legend entries as labels inside labels_frame
         for idx, (label, size) in enumerate(zip(labels, sizes)):
