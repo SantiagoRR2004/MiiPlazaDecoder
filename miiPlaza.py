@@ -266,6 +266,9 @@ class MiiPlaza:
             textprops={"fontname": best_font},
         )
 
+        # Extract colors from wedges
+        wedge_colors = [wedge.get_facecolor() for wedge in wedges]
+
         # Calculate cumulative angles for boundaries between wedges
         cumulative = np.cumsum([0] + sizes) / total * 360
 
@@ -372,14 +375,28 @@ class MiiPlaza:
 
         # Add legend entries as labels inside labels_frame
         for idx, (label, size) in enumerate(zip(labels, sizes)):
+            # Convert matplotlib color to hex for tkinter
+            color = wedge_colors[idx]
+            hex_color = f"#{int(color[0]*255):02x}{int(color[1]*255):02x}{int(color[2]*255):02x}"
+
+            # Create a colored frame for the entire row
+            row_frame = tk.Frame(labels_frame, bg=hex_color)
+            row_frame.grid(row=idx, column=0, columnspan=2, sticky="ew", padx=0, pady=0)
+            row_frame.grid_columnconfigure(0, weight=1)
+            row_frame.grid_columnconfigure(1, weight=1)
+
             lbl_label = tk.Label(
-                labels_frame, text=label, font=(best_font, 9), anchor="w"
+                row_frame, text=label, font=(best_font, 9), anchor="w", bg=hex_color
             )
             lbl_size = tk.Label(
-                labels_frame, text=str(size), font=(best_font, 9), anchor="e"
+                row_frame,
+                text=str(size),
+                font=(best_font, 9),
+                anchor="e",
+                bg=hex_color,
             )
-            lbl_label.grid(row=idx, column=0, sticky="w", padx=5, pady=2)
-            lbl_size.grid(row=idx, column=1, sticky="ew", padx=5, pady=2)
+            lbl_label.grid(row=0, column=0, sticky="w", padx=5, pady=2)
+            lbl_size.grid(row=0, column=1, sticky="ew", padx=5, pady=2)
 
         # Update scrollregion when all widgets are in place
         labels_frame.update_idletasks()
