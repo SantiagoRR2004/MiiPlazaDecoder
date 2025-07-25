@@ -289,20 +289,32 @@ class MiiPlaza:
         left_spacer.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
         # Frame for scrollbar and legend text (fixed width)
-        frame = tk.Frame(container_frame, width=needed_width)
+        frame = tk.Frame(container_frame, width=needed_width, bg="white")
         frame.pack(side=tk.LEFT, fill=tk.Y)
         frame.pack_propagate(False)  # Maintain fixed width
+
+        # Top spacer for vertical centering
+        top_spacer = tk.Frame(frame, bg="white")
+        top_spacer.pack(side=tk.TOP, fill=tk.X, expand=True)
+
+        # Middle frame to hold the actual legend content
+        legend_frame = tk.Frame(frame)
+        legend_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+
+        # Bottom spacer for vertical centering
+        bottom_spacer = tk.Frame(frame, bg="white")
+        bottom_spacer.pack(side=tk.BOTTOM, fill=tk.X, expand=True)
 
         # Right spacer for centering
         right_spacer = tk.Frame(container_frame, bg="white")
         right_spacer.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
 
         # Create a scrollbar and a canvas to hold the legend labels
-        scrollbar = tk.Scrollbar(frame, orient=tk.VERTICAL)
+        scrollbar = tk.Scrollbar(legend_frame, orient=tk.VERTICAL)
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
         legend_canvas = tk.Canvas(
-            frame, width=needed_width, height=400, yscrollcommand=scrollbar.set
+            legend_frame, width=needed_width, height=400, yscrollcommand=scrollbar.set
         )
         legend_canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         scrollbar.config(command=legend_canvas.yview)
