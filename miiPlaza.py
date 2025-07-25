@@ -280,9 +280,22 @@ class MiiPlaza:
         canvas.draw()
         canvas.get_tk_widget().pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
 
-        # Frame for scrollbar and legend text
-        frame = tk.Frame(root)
-        frame.pack(side=tk.RIGHT, fill=tk.Y)
+        # Container frame for centering the legend
+        container_frame = tk.Frame(root)
+        container_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+
+        # Left spacer for centering
+        left_spacer = tk.Frame(container_frame, bg="white")
+        left_spacer.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+        # Frame for scrollbar and legend text (fixed width)
+        frame = tk.Frame(container_frame, width=needed_width)
+        frame.pack(side=tk.LEFT, fill=tk.Y)
+        frame.pack_propagate(False)  # Maintain fixed width
+
+        # Right spacer for centering
+        right_spacer = tk.Frame(container_frame, bg="white")
+        right_spacer.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
 
         # Create a scrollbar and a canvas to hold the legend labels
         scrollbar = tk.Scrollbar(frame, orient=tk.VERTICAL)
