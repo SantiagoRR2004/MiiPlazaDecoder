@@ -309,7 +309,7 @@ class MiiPlaza:
             lbl_label = tk.Label(temp_frame, text=label, font=test_font, anchor="w")
             lbl_size = tk.Label(temp_frame, text=str(size), font=test_font, anchor="e")
             lbl_label.grid(row=idx, column=0, sticky="w", padx=5, pady=2)
-            lbl_size.grid(row=idx, column=1, sticky="e", padx=5, pady=2)
+            lbl_size.grid(row=idx, column=1, sticky="ew", padx=5, pady=2)
 
         temp_frame.update_idletasks()
         needed_width = temp_frame.winfo_reqwidth()
@@ -356,7 +356,7 @@ class MiiPlaza:
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
         legend_canvas = tk.Canvas(
-            legend_frame, width=needed_width, height=400, yscrollcommand=scrollbar.set
+            legend_frame, width=needed_width, yscrollcommand=scrollbar.set
         )
         legend_canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         scrollbar.config(command=legend_canvas.yview)
