@@ -6,6 +6,7 @@ import matplotlib.font_manager as fm
 import tkinter as tk
 from matplotlib.patches import Circle
 import tkinter.font as tkfont
+import itertools
 import numpy as np
 import sys
 
@@ -254,6 +255,15 @@ class MiiPlaza:
         # Get best font for CJK support
         best_font = self._get_best_font()
 
+        colorCycle = itertools.cycle(plt.cm.tab10.colors)
+
+        # Get the colors
+        colorMap = {
+            size: next(colorCycle)
+            for size in sorted({int(s) for s in sizes}, reverse=True)
+        }
+        wedgeColors = [colorMap[int(size)] for size in sizes]
+
         # Plot figure
         fig, ax = plt.subplots(figsize=(6, 6))
 
@@ -264,10 +274,8 @@ class MiiPlaza:
             startangle=0,
             shadow=False,
             textprops={"fontname": best_font},
+            colors=wedgeColors,
         )
-
-        # Extract colors from wedges
-        wedge_colors = [wedge.get_facecolor() for wedge in wedges]
 
         # Calculate cumulative angles for boundaries between wedges
         cumulative = np.cumsum([0] + sizes) / total * 360
@@ -364,7 +372,7 @@ class MiiPlaza:
         # Add legend entries as labels inside labels_frame
         for idx, (label, size) in enumerate(zip(labels, sizes)):
             # Convert matplotlib color to hex for tkinter
-            color = wedge_colors[idx]
+            color = wedgeColors[idx]
             hex_color = f"#{int(color[0]*255):02x}{int(color[1]*255):02x}{int(color[2]*255):02x}"
 
             # Create a colored frame for the entire row
