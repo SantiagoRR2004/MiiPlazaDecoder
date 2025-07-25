@@ -2,8 +2,8 @@ import pandas as pd
 import mii
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import matplotlib.font_manager as fm
 import tkinter as tk
-from tkinter import Scrollbar, Canvas
 from matplotlib.patches import Circle
 import tkinter.font as tkfont
 import numpy as np
@@ -182,6 +182,45 @@ class MiiPlaza:
 
         return toret
 
+    def _get_best_font(self) -> str:
+        """
+        Get the best available font that supports CJK characters
+
+        Args:
+            - None
+
+        Returns:
+            str: Font name that supports CJK characters
+        """
+        # List of fonts that typically support CJK characters
+        cjk_fonts = [
+            "Noto Sans CJK JP",
+            "Noto Sans CJK SC",
+            "Noto Sans CJK TC",
+            "Noto Sans CJK KR",
+            "SimSun",
+            "Microsoft YaHei",
+            "Malgun Gothic",
+            "Yu Gothic",
+            "Hiragino Sans",
+            "Apple SD Gothic Neo",
+            "Source Han Sans",
+            "WenQuanYi Micro Hei",
+            "Droid Sans Fallback",
+            "Arial Unicode MS",
+        ]
+
+        # Get list of available fonts
+        available_fonts = [f.name for f in fm.fontManager.ttflist]
+
+        # Find the first available CJK font
+        for font in cjk_fonts:
+            if font in available_fonts:
+                return font
+
+        # If no CJK font is found, return a fallback
+        return "DejaVu Sans"
+
     def graphPieChart(self, column: str) -> None:
         miiDf = self.getMiiData()
 
@@ -212,6 +251,9 @@ class MiiPlaza:
             for label, size in zip(labels, sizes)
         ]
 
+        # Get best font for CJK support
+        best_font = self._get_best_font()
+
         # Plot figure
         fig, ax = plt.subplots(figsize=(6, 6))
 
@@ -221,7 +263,7 @@ class MiiPlaza:
             autopct=autopct_format,
             startangle=0,
             shadow=False,
-            textprops={"fontname": "SimSun"},
+            textprops={"fontname": best_font},
         )
 
         # Calculate cumulative angles for boundaries between wedges
@@ -261,7 +303,7 @@ class MiiPlaza:
         temp_frame.pack()
 
         # Create labels in temp_frame
-        test_font = tkfont.Font(family="DejaVu Sans", size=9)
+        test_font = tkfont.Font(family=best_font, size=9)
 
         for idx, (label, size) in enumerate(zip(labels, sizes)):
             lbl_label = tk.Label(temp_frame, text=label, font=test_font, anchor="w")
@@ -331,10 +373,10 @@ class MiiPlaza:
         # Add legend entries as labels inside labels_frame
         for idx, (label, size) in enumerate(zip(labels, sizes)):
             lbl_label = tk.Label(
-                labels_frame, text=label, font=("DejaVu Sans", 9), anchor="w"
+                labels_frame, text=label, font=(best_font, 9), anchor="w"
             )
             lbl_size = tk.Label(
-                labels_frame, text=str(size), font=("DejaVu Sans", 9), anchor="e"
+                labels_frame, text=str(size), font=(best_font, 9), anchor="e"
             )
             lbl_label.grid(row=idx, column=0, sticky="w", padx=5, pady=2)
             lbl_size.grid(row=idx, column=1, sticky="ew", padx=5, pady=2)
