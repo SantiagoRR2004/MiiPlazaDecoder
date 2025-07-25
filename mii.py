@@ -1,4 +1,5 @@
 from mappings import Software, Outfit, PreferredPet, Dream, Hobby
+from datetime import datetime, timedelta, timezone
 
 
 class Mii:
@@ -35,7 +36,8 @@ class Mii:
 
     unknownBytes = (
         list(range(20, 46))
-        + list(range(66, 78))
+        + list(range(66, 70))
+        + list(range(75, 78))
         + [216, 217]
         + [221]
         + list(range(228, MII_SIZE))
@@ -155,6 +157,7 @@ class Mii:
         """
         self.setName()
         self.setCreator()
+        self.setDateLastCrossedWith()
         self.setSoftware()
         self.setCountry()
         self.setSubregion()
@@ -212,6 +215,30 @@ class Mii:
         self.creator = (
             self.bytesData[46 : 46 + creatorEnd].decode("utf-16le").strip("\x00")
         )
+
+    def setDateLastCrossedWith(self) -> None:
+        """
+        Decode the date of last crossed with from bytes 70-74
+
+        It is stored as a timestamp in milliseconds, with the
+        bytes reversed and the date adjusted by -1 day and +30 years.
+
+        Args:
+            - None
+
+        Returns:
+            - None
+        """
+        timestampMs = int.from_bytes(
+            self.bytesData[70:75][::-1], byteorder="big", signed=False
+        )
+
+        rawDatetime = datetime.fromtimestamp(timestampMs / 1000, tz=timezone.utc)
+
+        adjustedDatetime = rawDatetime - timedelta(days=1)
+        adjustedDatetime = adjustedDatetime.replace(year=adjustedDatetime.year + 30)
+
+        self.dateLastCrossedWith = adjustedDatetime
 
     def setSoftware(self) -> None:
         """
@@ -451,6 +478,7 @@ class Mii:
         return {
             "Name": self.name,
             "Creator": self.creator,
+            "DateLastCrossedWith": self.dateLastCrossedWith,
             "GameID": self.gameID,
             "GameName": self.gameName,
             "Country": self.country,
