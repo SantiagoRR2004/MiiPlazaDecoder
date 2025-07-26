@@ -525,6 +525,18 @@ class MiiPlaza:
             prop={"family": best_font},
         )
 
+        # Adjust layout to prevent legend from being cut off
+        plt.tight_layout()
+
+        # Check if legend extends beyond figure and adjust if needed
+        fig.canvas.draw()  # Ensure everything is rendered
+        legend_bbox = legend.get_window_extent(fig.canvas.get_renderer())
+        fig_bbox = fig.bbox
+
+        if legend_bbox.x1 > fig_bbox.x1:
+            # Legend extends beyond figure, move pie chart left
+            plt.subplots_adjust(left=0.1, right=0.65)
+
         # pixels to scroll per mousewheel event
         d = {"down": 30, "up": -30}
 
