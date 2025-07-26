@@ -505,14 +505,22 @@ class MiiPlaza:
         ax.set_title(f"Distribution of {column}")
         ax.set_aspect("equal")
 
-        # Create legend with all original labels (not filtered by threshold)
+        # Create legend with all original labels and counts
         legendHandles = [
             plt.Rectangle((0, 0), 1, 1, facecolor=color) for color in wedgeColors
         ]
+
+        # Calculate the maximum width needed for proper alignment
+        maxLabelWidth = max(len(str(label)) for label in labels)
+        maxSizeWidth = max(len(str(size)) for size in sizes)
+        legendLabels = [
+            f"{label:<{maxLabelWidth}} {size:>{maxSizeWidth}}"
+            for label, size in zip(labels, sizes)
+        ]
+
         legend = ax.legend(
             legendHandles,
-            labels,
-            loc="upper left",
+            legendLabels,
             bbox_to_anchor=(1.02, 0, 0.07, 1),
             prop={"family": best_font},
         )
