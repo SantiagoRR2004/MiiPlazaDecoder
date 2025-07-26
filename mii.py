@@ -18,9 +18,6 @@ class Mii:
         Because we can't fit in here all that data,
         there must be an identifier that links to the CFL_DB.dat
 
-        - The date of last crossed with. It
-        needs to have from year to minutes.
-
         - The text of the personal message.
 
         - The gesture of the personal message.
