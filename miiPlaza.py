@@ -510,7 +510,11 @@ class MiiPlaza:
             plt.Rectangle((0, 0), 1, 1, facecolor=color) for color in wedgeColors
         ]
         legend = ax.legend(
-            legendHandles, labels, loc="upper left", bbox_to_anchor=(1.02, 0, 0.07, 1)
+            legendHandles,
+            labels,
+            loc="upper left",
+            bbox_to_anchor=(1.02, 0, 0.07, 1),
+            prop={"family": best_font},
         )
 
         # pixels to scroll per mousewheel event
