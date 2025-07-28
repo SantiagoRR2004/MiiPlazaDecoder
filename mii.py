@@ -171,8 +171,9 @@ class Mii:
         """
         Decode Mii name from bytes 0-19
 
-        There tends to be noise after two null bytes,
-        so we stop once we find the first occurrence.
+        The name is stored in UTF-16LE format
+        and it ends with an empty character
+        (two null bytes).
 
         Args:
             - None
@@ -180,21 +181,26 @@ class Mii:
         Returns:
             - None
         """
-        nameEnd = self.bytesData[:20].find(b"\x00\x00")
+        name = ""
+        currentPosition = 0
 
-        if nameEnd != -1:
-            nameEnd = nameEnd if nameEnd % 2 == 0 else nameEnd + 1
-        else:
-            nameEnd = 20
+        while (
+            self.bytesData[currentPosition : currentPosition + 2] != b"\x00\x00"
+            and currentPosition < 20
+        ):
+            byte = self.bytesData[currentPosition : currentPosition + 2]
+            name += byte.decode("utf-16le")
+            currentPosition += 2
 
-        self.name = self.bytesData[:nameEnd].decode("utf-16le").strip("\x00")
+        self.name = name
 
     def setCreator(self) -> None:
         """
         Decode creator name from bytes 46-65
 
-        There tends to be noise after two null bytes,
-        so we stop once we find the first occurrence.
+        The creator name is stored in UTF-16LE format
+        and it ends with an empty character
+        (two null bytes).
 
         Args:
             - None
@@ -202,16 +208,18 @@ class Mii:
         Returns:
             - None
         """
-        creatorEnd = self.bytesData[46:66].find(b"\x00\x00")
+        creator = ""
+        currentPosition = 46
 
-        if creatorEnd != -1:
-            creatorEnd = creatorEnd if creatorEnd % 2 == 0 else creatorEnd + 1
-        else:
-            creatorEnd = 0
+        while (
+            self.bytesData[currentPosition : currentPosition + 2] != b"\x00\x00"
+            and currentPosition < 66
+        ):
+            byte = self.bytesData[currentPosition : currentPosition + 2]
+            creator += byte.decode("utf-16le")
+            currentPosition += 2
 
-        self.creator = (
-            self.bytesData[46 : 46 + creatorEnd].decode("utf-16le").strip("\x00")
-        )
+        self.creator = creator
 
     def setDateLastCrossedWith(self) -> None:
         """
