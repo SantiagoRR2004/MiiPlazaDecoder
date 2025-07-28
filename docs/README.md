@@ -16,6 +16,6 @@ To investigate the unknown bytes, the `findPossibleBits` function from [Mii Plaz
 
 All other info except the Miis has not been decoded yet. You can find online resources that add collectables to the savefile, so this kind of software must show where that data is encoded. Here is an [example](https://github.com/marcrobledo/savegame-editors/blob/master/streetpass-mii-plaza/streetpass-mii-plaza.js).
 
-### To the graphs
+### To the [graphs](/grapher.py)
 
 To show a categorical piece of info of all Miis I wanted to create a pie chart with a scrollable legend because sometimes there are a lot of categories (last software used for example). Attempts were made with TKinter and matplotlib, but they didn't quite work as I intended. If you know more about graphs, please collaborate with the project.
