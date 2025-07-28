@@ -3,6 +3,5 @@ pandas
 bs4
 requests
 matplotlib
-selenium
-webdriver_manager
 platformdirs
+git+https://github.com/SantiagoRR2004/Modules

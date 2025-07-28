@@ -1,9 +1,6 @@
-from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.common.by import By
 import xml.etree.ElementTree as ET
-from selenium import webdriver
 from bs4 import BeautifulSoup
+from Modules import Internet
 import platformdirs
 import requests
 import zipfile
@@ -175,32 +172,14 @@ def getDatomatic() -> dict:
     """
     url = "https://datomatic.no-intro.org/index.php?page=download&op=dat&s=28"
 
-    chrome_options = webdriver.ChromeOptions()
-    chrome_options.add_argument("--headless")
-    chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
-    chrome_options.add_experimental_option("useAutomationExtension", False)
-    chrome_options.add_argument("--disable-blink-features=AutomationControlled")
-    service = Service(ChromeDriverManager().install())
-    driver = webdriver.Chrome(options=chrome_options, service=service)
+    driver = Internet.configureChrome()
+
+    driver.maximize_window()
 
     driver.get(url)
 
-    # Wait for it to load
-    time.sleep(4)
-
-    # Find and click the "Prepare" button
-    button = driver.find_element(
-        By.XPATH, "//input[@type='submit' and @value='Prepare']"
-    )
-    button.click()
-
-    # Wait for redirection or further action
-    time.sleep(5)
-
-    button = driver.find_element(
-        By.XPATH, "//input[@type='submit' and @value='Download!!']"
-    )
-    button.click()
+    Internet.clickButton(driver, "Prepare")
+    Internet.clickButton(driver, "Download!!")
 
     # Wait for the download to end
     time.sleep(5)
