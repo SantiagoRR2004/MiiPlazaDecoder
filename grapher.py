@@ -53,8 +53,7 @@ class Grapher:
 
     BEST_FONT = _get_best_font()
 
-    def graphPieChartTkinter(self, data: pd.Series) -> None:
-
+    def graphPieChart(self, data: pd.Series) -> plt.Figure:
         valueCounts = data.value_counts().reset_index()
         valueCounts.columns = [data.name, "count"]
 
@@ -63,23 +62,18 @@ class Grapher:
             by=["count", data.name], ascending=[False, True]
         )
 
-        labels = valueCounts[data.name].values
-        sizes = valueCounts["count"].values
-        total = sum(sizes)
-
-        def on_closing():
-            plt.close("all")
-            root.destroy()
-            sys.exit()
+        self.labels = valueCounts[data.name].values
+        self.sizes = valueCounts["count"].values
+        total = sum(self.sizes)
 
         threshold = 2
 
         def autopct_format(pct):
             return f"{pct:.1f}%" if pct >= threshold else ""
 
-        final_labels = [
+        finalLabels = [
             label if (size / total * 100) >= threshold else ""
-            for label, size in zip(labels, sizes)
+            for label, size in zip(self.labels, self.sizes)
         ]
 
         colorCycle = itertools.cycle(plt.cm.tab10.colors)
@@ -87,33 +81,33 @@ class Grapher:
         # Get the colors
         colorMap = {
             size: next(colorCycle)
-            for size in sorted({int(s) for s in sizes}, reverse=True)
+            for size in sorted({int(s) for s in self.sizes}, reverse=True)
         }
-        wedgeColors = [colorMap[int(size)] for size in sizes]
+        self.wedgeColors = [colorMap[int(size)] for size in self.sizes]
 
         # Plot figure
-        fig, ax = plt.subplots(figsize=(6, 6))
+        fig, self.ax = plt.subplots(figsize=(6, 6))
 
-        wedges, texts, autotexts = ax.pie(
-            sizes,
-            labels=final_labels,
+        self.ax.pie(
+            self.sizes,
+            labels=finalLabels,
             autopct=autopct_format,
             startangle=0,
             shadow=False,
             textprops={"fontname": self.BEST_FONT},
-            colors=wedgeColors,
+            colors=self.wedgeColors,
         )
 
         # Calculate cumulative angles for boundaries between wedges
-        cumulative = np.cumsum([0] + sizes) / total * 360
+        cumulative = np.cumsum([0] + self.sizes) / total * 360
 
         # Draw black lines between wedges (edges)
-        for i in range(len(sizes)):
-            if sizes[i] != sizes[(i + 1) % len(sizes)]:
+        for i in range(len(self.sizes)):
+            if self.sizes[i] != self.sizes[(i + 1) % len(self.sizes)]:
                 angle = cumulative[i]  # boundary after wedge i
                 theta = np.deg2rad(angle)
                 r = 1
-                ax.plot(
+                self.ax.plot(
                     [0, r * np.cos(theta)],
                     [0, r * np.sin(theta)],
                     color="black",
@@ -122,10 +116,21 @@ class Grapher:
 
         # Add a black circular border around the pie chart
         circle = Circle((0, 0), 1, edgecolor="black", facecolor="none", linewidth=1.5)
-        ax.add_patch(circle)
+        self.ax.add_patch(circle)
 
-        ax.set_title(f"Distribution of {data.name}")
-        ax.set_aspect("equal")
+        self.ax.set_title(f"Distribution of {data.name}")
+        self.ax.set_aspect("equal")
+
+        return fig
+
+    def graphPieChartTkinter(self, data: pd.Series) -> None:
+
+        def on_closing():
+            plt.close("all")
+            root.destroy()
+            sys.exit()
+
+        fig = self.graphPieChart(data)
 
         # Tkinter window
         root = tk.Tk()
@@ -139,8 +144,8 @@ class Grapher:
 
         # Find widest label and size
         test_font = tkfont.Font(family=self.BEST_FONT, size=9)
-        max_label_width = max(test_font.measure(label) for label in labels)
-        max_size_width = max(test_font.measure(str(size)) for size in sizes)
+        max_label_width = max(test_font.measure(label) for label in self.labels)
+        max_size_width = max(test_font.measure(str(size)) for size in self.sizes)
 
         needed_width = (
             max_label_width + max_size_width + (4 * 10)
@@ -197,9 +202,9 @@ class Grapher:
         )
 
         # Add legend entries as labels inside labels_frame
-        for idx, (label, size) in enumerate(zip(labels, sizes)):
+        for idx, (label, size) in enumerate(zip(self.labels, self.sizes)):
             # Convert matplotlib color to hex for tkinter
-            color = wedgeColors[idx]
+            color = self.wedgeColors[idx]
             hex_color = f"#{int(color[0]*255):02x}{int(color[1]*255):02x}{int(color[2]*255):02x}"
 
             # Create a colored frame for the entire row
@@ -264,87 +269,23 @@ class Grapher:
         root.mainloop()
 
     def graphPieChartMatplotlib(self, data: pd.Series) -> None:
-        valueCounts = data.value_counts().reset_index()
-        valueCounts.columns = [data.name, "count"]
 
-        # Sort by count (descending) and then by value (ascending)
-        valueCounts = valueCounts.sort_values(
-            by=["count", data.name], ascending=[False, True]
-        )
-
-        labels = valueCounts[data.name].values
-        sizes = valueCounts["count"].values
-        total = sum(sizes)
-
-        threshold = 2
-
-        def autopct_format(pct):
-            return f"{pct:.1f}%" if pct >= threshold else ""
-
-        finalLabels = [
-            label if (size / total * 100) >= threshold else ""
-            for label, size in zip(labels, sizes)
-        ]
-
-        colorCycle = itertools.cycle(plt.cm.tab10.colors)
-
-        # Get the colors
-        colorMap = {
-            size: next(colorCycle)
-            for size in sorted({int(s) for s in sizes}, reverse=True)
-        }
-        wedgeColors = [colorMap[int(size)] for size in sizes]
-
-        # Plot figure
-        fig, ax = plt.subplots(figsize=(6, 6))
-
-        wedges, texts, autotexts = ax.pie(
-            sizes,
-            labels=finalLabels,
-            autopct=autopct_format,
-            startangle=0,
-            shadow=False,
-            textprops={"fontname": self.BEST_FONT},
-            colors=wedgeColors,
-        )
-
-        # Calculate cumulative angles for boundaries between wedges
-        cumulative = np.cumsum([0] + sizes) / total * 360
-
-        # Draw black lines between wedges (edges)
-        for i in range(len(sizes)):
-            if sizes[i] != sizes[(i + 1) % len(sizes)]:
-                angle = cumulative[i]  # boundary after wedge i
-                theta = np.deg2rad(angle)
-                r = 1
-                ax.plot(
-                    [0, r * np.cos(theta)],
-                    [0, r * np.sin(theta)],
-                    color="black",
-                    linewidth=1.5,
-                )
-
-        # Add a black circular border around the pie chart
-        circle = Circle((0, 0), 1, edgecolor="black", facecolor="none", linewidth=1.5)
-        ax.add_patch(circle)
-
-        ax.set_title(f"Distribution of {data.name}")
-        ax.set_aspect("equal")
+        fig = self.graphPieChart(data)
 
         # Create legend with all original labels and counts
         legendHandles = [
-            plt.Rectangle((0, 0), 1, 1, facecolor=color) for color in wedgeColors
+            plt.Rectangle((0, 0), 1, 1, facecolor=color) for color in self.wedgeColors
         ]
 
         # Calculate the maximum width needed for proper alignment
-        maxLabelWidth = max(len(str(label)) for label in labels)
-        maxSizeWidth = max(len(str(size)) for size in sizes)
+        maxLabelWidth = max(len(str(label)) for label in self.labels)
+        maxSizeWidth = max(len(str(size)) for size in self.sizes)
         legendLabels = [
             f"{label:<{maxLabelWidth}} {size:>{maxSizeWidth}}"
-            for label, size in zip(labels, sizes)
+            for label, size in zip(self.labels, self.sizes)
         ]
 
-        legend = ax.legend(
+        legend = self.ax.legend(
             legendHandles,
             legendLabels,
             bbox_to_anchor=(1.02, 0, 0.07, 1),
