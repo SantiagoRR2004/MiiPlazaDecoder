@@ -11,7 +11,8 @@ import sys
 
 
 class Grapher:
-    def _get_best_font(self) -> str:
+    @staticmethod
+    def _get_best_font() -> str:
         """
         Get the best available font that supports CJK characters
 
@@ -50,6 +51,8 @@ class Grapher:
         # If no CJK font is found, return a fallback
         return "DejaVu Sans"
 
+    BEST_FONT = _get_best_font()
+
     def graphPieChartTkinter(self, data: pd.Series) -> None:
 
         valueCounts = data.value_counts().reset_index()
@@ -79,9 +82,6 @@ class Grapher:
             for label, size in zip(labels, sizes)
         ]
 
-        # Get best font for CJK support
-        best_font = self._get_best_font()
-
         colorCycle = itertools.cycle(plt.cm.tab10.colors)
 
         # Get the colors
@@ -100,7 +100,7 @@ class Grapher:
             autopct=autopct_format,
             startangle=0,
             shadow=False,
-            textprops={"fontname": best_font},
+            textprops={"fontname": self.BEST_FONT},
             colors=wedgeColors,
         )
 
@@ -138,7 +138,7 @@ class Grapher:
         hidden_win.withdraw()  # Hide it
 
         # Find widest label and size
-        test_font = tkfont.Font(family=best_font, size=9)
+        test_font = tkfont.Font(family=self.BEST_FONT, size=9)
         max_label_width = max(test_font.measure(label) for label in labels)
         max_size_width = max(test_font.measure(str(size)) for size in sizes)
 
@@ -209,12 +209,16 @@ class Grapher:
             row_frame.grid_columnconfigure(1, weight=1)
 
             lbl_label = tk.Label(
-                row_frame, text=label, font=(best_font, 9), anchor="w", bg=hex_color
+                row_frame,
+                text=label,
+                font=(self.BEST_FONT, 9),
+                anchor="w",
+                bg=hex_color,
             )
             lbl_size = tk.Label(
                 row_frame,
                 text=str(size),
-                font=(best_font, 9),
+                font=(self.BEST_FONT, 9),
                 anchor="e",
                 bg=hex_color,
             )
@@ -282,9 +286,6 @@ class Grapher:
             for label, size in zip(labels, sizes)
         ]
 
-        # Get best font for CJK support
-        best_font = self._get_best_font()
-
         colorCycle = itertools.cycle(plt.cm.tab10.colors)
 
         # Get the colors
@@ -303,7 +304,7 @@ class Grapher:
             autopct=autopct_format,
             startangle=0,
             shadow=False,
-            textprops={"fontname": best_font},
+            textprops={"fontname": self.BEST_FONT},
             colors=wedgeColors,
         )
 
@@ -347,7 +348,7 @@ class Grapher:
             legendHandles,
             legendLabels,
             bbox_to_anchor=(1.02, 0, 0.07, 1),
-            prop={"family": best_font},
+            prop={"family": self.BEST_FONT},
         )
 
         # Adjust layout to prevent legend from being cut off
