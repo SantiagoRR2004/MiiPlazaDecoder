@@ -101,6 +101,7 @@ class Outfit:
         130: "French Fries Hat",
         131: "Baguette Hat",
         133: "Apple Hat",
+        134: "Strawberry Hat",
         135: "Pineapple Hat",
         136: "Caffè Latte Hat",
         137: "Teacup Hat",
