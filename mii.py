@@ -27,6 +27,10 @@ class Mii:
         I couldn't find this one.
 
         - Maybe some of the game records.
+
+    For some reason the latest Mii has all bytes
+    after the 241st byte set to 0. As a matter of fact,
+    the 241st byte is 48 for all other Miis.
     """
 
     MII_SIZE = 264
@@ -37,7 +41,8 @@ class Mii:
         + list(range(75, 78))
         + [216, 217]
         + [221]
-        + list(range(228, MII_SIZE))
+        + list(range(228, 254))
+        + list(range(257, MII_SIZE))
     )
 
     unknownBits = [b * 8 + i for b in unknownBytes for i in range(8)]
@@ -115,7 +120,6 @@ class Mii:
         1935,
         2005,
         2006,
-        2032,
         2110,
         2111,
     ]
@@ -166,6 +170,7 @@ class Mii:
         self.setDream()
         self.setHobby()
         self.setPremium()
+        self.setMACOUI()
 
     def setName(self) -> None:
         """
@@ -419,6 +424,22 @@ class Mii:
         """
         self.premium = bool((self.bytesData[231] >> 0) & 1)
 
+    def setMACOUI(self) -> None:
+        """
+        Set the MAC OUI from bytes 254-256.
+
+        The OUI is the first 3 bytes of the MAC address.
+        It is used to identify the manufacturer of the device.
+        In this case, they are all Nintendo devices.
+
+        Args:
+            - None
+
+        Returns:
+            - None
+        """
+        self.macOUI = ":".join(f"{b:02X}" for b in self.bytesData[254:257])
+
     def checkAssumptions(self) -> None:
         """
         Check assumptions about the Mii data.
@@ -496,6 +517,7 @@ class Mii:
             "Dream": self.dream,
             "Hobby": self.hobby,
             "Premium": self.premium,
+            "MAC_OUI": self.macOUI,
         }
 
     def getUnkownBytes(self) -> list:
