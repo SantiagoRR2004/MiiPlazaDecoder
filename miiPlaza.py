@@ -32,6 +32,10 @@ class MiiPlaza:
         Set all Mii attributes by decoding the bytes data
         They are stored beginning on the 14154 byte.
 
+        At most 1000 Miis are stored. If there are more,
+        they are replaced in the same order except
+        the VIPs.
+
         Args:
             - None
 
@@ -41,7 +45,7 @@ class MiiPlaza:
         miis = []
         pos = 14154
 
-        while self.bytesData[pos] != 0:
+        while self.bytesData[pos] != 0 and len(miis) < 1000:
             miiData = self.bytesData[pos : pos + mii.Mii.MII_SIZE]
             miis.append(mii.Mii(miiData))
             pos += mii.Mii.MII_SIZE
