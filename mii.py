@@ -56,7 +56,7 @@ class Mii:
         + [216, 217]
         + [221]
         + [234, 235, 236, 237]
-        + [260, 261]
+        + [261]
     )
     assert set(emptyBytes).issubset(
         set(unknownBytes)
@@ -103,12 +103,8 @@ class Mii:
         1854,
         1855,
         1871,
-        1907,
         1908,
         1909,
-        1910,
-        1911,
-        1915,
         1916,
         1918,
         1919,
@@ -119,7 +115,10 @@ class Mii:
         1934,
         1935,
         2005,
-        2006,
+        2082,
+        2083,
+        2084,
+        2087,
         2110,
         2111,
     ]
@@ -299,7 +298,7 @@ class Mii:
         Decode the number of times crossed
         with this Mii from bytes 214-216
 
-        This has only been checked up to 35,
+        This has only been checked up to 55,
         so if it give a value greater than that,
         check that it is accurate.
 
@@ -310,9 +309,9 @@ class Mii:
             - None
         """
         self.nCrossedWith = int.from_bytes(self.bytesData[214:216], byteorder="little")
-        if self.nCrossedWith > 35:
+        if self.nCrossedWith > 55:
             print(
-                "Warning: Number of times crossed with this Mii is greater than 35. "
+                "Warning: Number of times crossed with this Mii is greater than 55. "
                 f"Check if this value is accurate. {self.name} has been crossed {self.nCrossedWith} times. "
                 "Please report this as an issue to the repository."
             )
