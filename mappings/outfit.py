@@ -10,6 +10,7 @@ class Outfit:
     """
 
     decoder = {
+        # Initial outfits
         0: "(None)",
         1: "Mario's Cap",
         2: "Luigi's Cap",
@@ -27,6 +28,7 @@ class Outfit:
         14: "Metroid Hat",
         15: "Kirby Hat",
         16: "Ultimate Helmet",
+        # Find Mii II update outfits
         17: "Arwing Hat",
         19: "Red Ribbon",
         20: "Top Hat",
@@ -71,6 +73,7 @@ class Outfit:
         72: "Prince's Crown",
         73: "Princess's Crown",
         74: "Swimming Cap",
+        # Wave 1 outfits
         76: "Pixel Mario Hat",
         77: "Super Mushroom Hat",
         78: "1-Up Mushroom Hat",
@@ -159,6 +162,7 @@ class Outfit:
         165: "Demon King Hat",
         166: "Mii Force Helmet",
         167: "Scout Ship Hat",
+        # Wave 2 outfits
         170: "Link Costume",
         171: "Mario Costume",
         172: "Luigi Costume",
@@ -175,6 +179,7 @@ class Outfit:
         184: "Guide's Visor",
         185: "Zombie Hat",
         186: "Super Psymad Mask",
+        # Wave 3 outfits
         187: "Pirate Costume",
         188: "Chef Costume",
         190: "Football Ball Costume",
