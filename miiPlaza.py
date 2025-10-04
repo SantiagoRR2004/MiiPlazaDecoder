@@ -5,10 +5,12 @@ import mii
 
 class MiiPlaza:
     """
-    There are more things that could be added here like
-    the puzzle pieces from:
+    There is more information in the Mii Plaza savefile
+    that has not been decoded yet.
 
+    Here is a good reference:
     https://www.reddit.com/r/3dshacks/comments/4c5rcp/streetpass_mii_plaza_puzzle_swap_unlock_all/
+    https://github.com/marcrobledo/savegame-editors/blob/master/streetpass-mii-plaza/streetpass-mii-plaza.js
     """
 
     MII_PLAZA_SIZE = 393216
@@ -25,16 +27,31 @@ class MiiPlaza:
         """
         assert len(bytesData) == self.MII_PLAZA_SIZE, "Invalid Mii Plaza size"
         self.bytesData = bytesData
+        self.setAll()
+
+    def setAll(self) -> None:
+        """
+        Set all attributes of the Mii Plaza object by decoding the bytes data
+
+        Args:
+            - None
+
+        Returns:
+            - None
+        """
         self.setMiis()
+        self.setStreetPassTags()
+        self.setNumberOfTickets()
+        self.setFantasticRatings()
 
     def setMiis(self) -> None:
         """
         Set all Mii attributes by decoding the bytes data
-        They are stored beginning on the 14154 byte.
+        from bytes 14154-278153.
 
-        At most 1000 Miis are stored. If there are more,
+        At most 1000 Miis (264 bytes each) are stored. If there are more,
         they are replaced in the same order except
-        the VIPs.
+        the VIPs, which are not replaced.
 
         Args:
             - None
@@ -50,7 +67,49 @@ class MiiPlaza:
             miis.append(mii.Mii(miiData))
             pos += mii.Mii.MII_SIZE
 
-        self.miis = miis
+        self.miis: list[mii.Mii] = miis
+
+    def setStreetPassTags(self) -> None:
+        """
+        Decode the streetPass tags from bytes 278128-278131
+
+        Args:
+            - None
+
+        Returns:
+            - None
+        """
+        self.streetPassTags = int.from_bytes(
+            self.bytesData[278128:278132], byteorder="little"
+        )
+
+    def setNumberOfTickets(self) -> None:
+        """
+        Decode the number of tickets from bytes 373606-373607
+
+        Args:
+            - None
+
+        Returns:
+            - None
+        """
+        self.nTickets = int.from_bytes(
+            self.bytesData[373606:373608], byteorder="little"
+        )
+
+    def setFantasticRatings(self) -> None:
+        """
+        Decode the fantastic ratings from bytes 373974-373975
+
+        Args:
+            - None
+
+        Returns:
+            - None
+        """
+        self.fantasticRatings = int.from_bytes(
+            self.bytesData[373974:373976], byteorder="little"
+        )
 
     def getMiiData(self) -> pd.DataFrame:
         """
