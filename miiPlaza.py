@@ -43,6 +43,7 @@ class MiiPlaza:
         self.setMiis()
         self.setStreetPassTags()
         self.setOutfit()
+        self.setGreeting()
         self.setNumberOfTickets()
         self.setFantasticRatings()
 
@@ -99,6 +100,29 @@ class MiiPlaza:
 
         if self.outfit == "Unknown Outfit":
             print("Current main Mii Plaza outfit is unknown.")
+
+    def setGreeting(self) -> None:
+        """
+        Decode the greeting from bytes 278144-278175
+
+        Args:
+            - None
+
+        Returns:
+            - None
+        """
+        greeting = ""
+        currentPosition = 278144
+
+        while (
+            self.bytesData[currentPosition : currentPosition + 2] != b"\x00\x00"
+            and currentPosition < 278176
+        ):
+            byte = self.bytesData[currentPosition : currentPosition + 2]
+            greeting += byte.decode("utf-16le")
+            currentPosition += 2
+
+        self.greeting = greeting
 
     def setNumberOfTickets(self) -> None:
         """
@@ -179,6 +203,7 @@ class MiiPlaza:
         """
         print(f"Number of StreetPass Tags: {self.streetPassTags}")
         print(f"Outfit: {self.outfit}")
+        print(f"Greeting: {self.greeting}")
         print(f"Number of Tickets: {self.nTickets}")
         print(f"Fantastic Ratings: {self.fantasticRatings}")
 
