@@ -3,3 +3,4 @@ from .outfit import Outfit
 from .preferredPet import PreferredPet
 from .dream import Dream
 from .hobby import Hobby
+from .expression import Expression

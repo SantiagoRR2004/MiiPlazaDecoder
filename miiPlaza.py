@@ -1,4 +1,4 @@
-from mappings import Outfit
+from mappings import Expression, Outfit
 from grapher import Grapher
 import pandas as pd
 import mii
@@ -46,6 +46,7 @@ class MiiPlaza:
         self.setGreeting()
         self.setNumberOfTickets()
         self.setFantasticRatings()
+        self.setGreetingExpression()
 
     def setMiis(self) -> None:
         """
@@ -152,6 +153,18 @@ class MiiPlaza:
             self.bytesData[373974:373976], byteorder="little"
         )
 
+    def setGreetingExpression(self) -> None:
+        """
+        Decode the greeting expression from byte 374008
+
+        Args:
+            - None
+
+        Returns:
+            - None
+        """
+        self.greetingExpression = Expression(self.bytesData[374008]).getExpression()
+
     def getMiiData(self) -> pd.DataFrame:
         """
         Get Mii data as a pandas DataFrame
@@ -206,6 +219,7 @@ class MiiPlaza:
         print(f"Greeting: {self.greeting}")
         print(f"Number of Tickets: {self.nTickets}")
         print(f"Fantastic Ratings: {self.fantasticRatings}")
+        print(f"Greeting Expression: {self.greetingExpression}")
 
     def findPossibleBits(self, classifier: pd.DataFrame, nBits: int) -> list:
         """
