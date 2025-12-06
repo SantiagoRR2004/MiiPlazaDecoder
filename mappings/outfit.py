@@ -219,6 +219,12 @@ class Outfit:
         """
         self.outfit = self.decoder.get(number, "Unknown Outfit")
 
+        if self.outfit == "Unknown Outfit":
+            print(
+                "Please, make a pull request with a single commit that adds the missing outfits."
+            )
+            print(f"Outfit number: {number}")
+
     def getOutfit(self) -> str:
         """
         Get the outfit.

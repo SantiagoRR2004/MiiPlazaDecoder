@@ -1,3 +1,4 @@
+from mappings import Outfit
 from grapher import Grapher
 import pandas as pd
 import mii
@@ -41,6 +42,7 @@ class MiiPlaza:
         """
         self.setMiis()
         self.setStreetPassTags()
+        self.setOutfit()
         self.setNumberOfTickets()
         self.setFantasticRatings()
 
@@ -82,6 +84,21 @@ class MiiPlaza:
         self.streetPassTags = int.from_bytes(
             self.bytesData[278128:278132], byteorder="little"
         )
+
+    def setOutfit(self) -> None:
+        """
+        Set the outfit from byte 278134.
+
+        Args:
+            - None
+
+        Returns:
+            - None
+        """
+        self.outfit = Outfit(self.bytesData[278134]).getOutfit()
+
+        if self.outfit == "Unknown Outfit":
+            print("Current main Mii Plaza outfit is unknown.")
 
     def setNumberOfTickets(self) -> None:
         """
@@ -161,6 +178,7 @@ class MiiPlaza:
             - None
         """
         print(f"Number of StreetPass Tags: {self.streetPassTags}")
+        print(f"Outfit: {self.outfit}")
         print(f"Number of Tickets: {self.nTickets}")
         print(f"Fantastic Ratings: {self.fantasticRatings}")
 

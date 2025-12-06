@@ -358,14 +358,11 @@ class Mii:
             - None
         """
         self.outfit = Outfit(self.bytesData[224]).getOutfit()
+
         if self.outfit == "Unknown Outfit":
-            print(
-                "Please, make a pull request with a single commit that adds the missing outfits."
-            )
             print(
                 f"Name: {self.name}",
                 f"Creator: {self.creator}",
-                f"Outfit number: {self.bytesData[224]}",
             )
 
     def setPreferredPet(self) -> None:
