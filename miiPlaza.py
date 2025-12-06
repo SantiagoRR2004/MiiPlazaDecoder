@@ -1,4 +1,4 @@
-from mappings import Expression, Outfit
+from mappings import Expression, Outfit, SpeechBalloon
 from grapher import Grapher
 import pandas as pd
 import mii
@@ -47,6 +47,7 @@ class MiiPlaza:
         self.setNumberOfTickets()
         self.setFantasticRatings()
         self.setGreetingExpression()
+        self.setBalloon()
 
     def setMiis(self) -> None:
         """
@@ -165,6 +166,18 @@ class MiiPlaza:
         """
         self.greetingExpression = Expression(self.bytesData[374008]).getExpression()
 
+    def setBalloon(self) -> None:
+        """
+        Decode the balloon from byte 376849
+
+        Args:
+            - None
+
+        Returns:
+            - None
+        """
+        self.balloon = SpeechBalloon(self.bytesData[376849]).getSpeechBalloon()
+
     def getMiiData(self) -> pd.DataFrame:
         """
         Get Mii data as a pandas DataFrame
@@ -220,6 +233,7 @@ class MiiPlaza:
         print(f"Number of Tickets: {self.nTickets}")
         print(f"Fantastic Ratings: {self.fantasticRatings}")
         print(f"Greeting Expression: {self.greetingExpression}")
+        print(f"Speech Balloon: {self.balloon}")
 
     def findPossibleBits(self, classifier: pd.DataFrame, nBits: int) -> list:
         """
