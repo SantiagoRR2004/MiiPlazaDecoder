@@ -58,6 +58,13 @@ class MiiPlaza:
         they are replaced in the same order except
         the VIPs, which are not replaced.
 
+        TODO Something to note is that the last 26 bytes of the
+        last Mii, seem not to be about the Mii itself.
+        The number of streetpass tags overlap with these bytes,
+        which means that these bytes should not be accounted for
+        decoding the Mii. However, the MAC OUI is stored there,
+        and with the final Mii is a valid address.
+
         Args:
             - None
 
@@ -313,7 +320,14 @@ class MiiPlaza:
         for offset in range(0, len(self.bytesData), width):
             chunk = self.bytesData[offset : offset + width]
             hex_bytes = " ".join(f"{b:02X}" for b in chunk)
-            ascii_bytes = "".join((chr(b) if 32 <= b < 127 else ".") for b in chunk)
+
+            # Only show printable ASCII and non-zero bytes
+            ascii_bytes = ""
+            for b in chunk:
+                if 32 <= b < 127:
+                    ascii_bytes += chr(b)
+                elif b != 0:
+                    ascii_bytes += str(b)
 
             # Padding for shorter lines
             hex_bytes = hex_bytes.ljust(width * 3)
