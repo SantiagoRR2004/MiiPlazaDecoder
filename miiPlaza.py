@@ -150,6 +150,20 @@ class MiiPlaza:
         data = [mii.getUnknownBits() for mii in self.miis]
         return pd.DataFrame(data)
 
+    def showGeneralData(self) -> None:
+        """
+        Show general Mii Plaza data
+
+        Args:
+            - None
+
+        Returns:
+            - None
+        """
+        print(f"Number of StreetPass Tags: {self.streetPassTags}")
+        print(f"Number of Tickets: {self.nTickets}")
+        print(f"Fantastic Ratings: {self.fantasticRatings}")
+
     def findPossibleBits(self, classifier: pd.DataFrame, nBits: int) -> list:
         """
         This is to help find where possible characteristics are
