@@ -6,3 +6,4 @@ from .hobby import Hobby
 from .expression import Expression
 from .speechBalloon import SpeechBalloon
 from .birthday import Birthday
+from .color import Color

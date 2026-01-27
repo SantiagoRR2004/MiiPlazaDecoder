@@ -1,4 +1,4 @@
-from mappings import Birthday, Expression, Outfit, SpeechBalloon
+from mappings import Birthday, Expression, Outfit, SpeechBalloon, Color
 from grapher import Grapher
 import pandas as pd
 import mii
@@ -41,6 +41,7 @@ class MiiPlaza:
             - None
         """
         self.setBirthday()
+        self.setColor()
         self.setMiis()
         self.setStreetPassTags()
         self.setOutfit()
@@ -62,6 +63,19 @@ class MiiPlaza:
             - None
         """
         self.birthday = Birthday(self.bytesData[28:30]).getBirthday()
+
+    def setColor(self) -> None:
+        """
+        Decode the color from the middle bits
+        of byte 29.
+
+        Args:
+            - None
+
+        Returns:
+            - None
+        """
+        self.color = Color(self.bytesData[29]).getColor()
 
     def setMiis(self) -> None:
         """
@@ -246,6 +260,7 @@ class MiiPlaza:
             if self.birthday
             else "Birthday Date: Not set"
         )
+        print(f"Color: {self.color}")
         print(f"Number of StreetPass Tags: {self.streetPassTags}")
         print(f"Outfit: {self.outfit}")
         print(f"Greeting: {self.greeting}")
