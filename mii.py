@@ -27,97 +27,88 @@ class Mii:
         I couldn't find this one.
 
         - Maybe some of the game records.
-
-    For some reason the latest Mii has all bytes
-    after the 241st byte set to 0. As a matter of fact,
-    the 241st byte is 48 for all other Miis.
     """
 
     MII_SIZE = 264
 
     unknownBytes = (
-        list(range(20, 46))
-        + list(range(66, 70))
-        + list(range(75, 78))
-        + [216, 217]
-        + [221]
-        + list(range(228, 254))
-        + list(range(257, MII_SIZE))
+        list(range(0, 8))
+        + list(range(27, 53))
+        + list(range(73, 77))
+        + list(range(82, 85))
+        + [223, 224]
+        + [228]
+        + list(range(235, 261))
     )
 
     unknownBits = [b * 8 + i for b in unknownBytes for i in range(8)]
-    unknownBits.remove(231 * 8)  # Premium status
+    unknownBits.remove((238) * 8)  # Premium status
 
     # The bytes that are always empty
     emptyBytes = (
-        [39]
-        + [66, 67]
-        + [75, 76, 77]
-        + [216, 217]
-        + [221]
-        + [234, 235, 236, 237]
-        + [261]
+        [3, 4]
+        + [46]
+        + [73, 74]
+        + [82, 83, 84]
+        + [223, 224]
+        + [228]
+        + [241, 242, 243, 244]
     )
     assert set(emptyBytes).issubset(
         set(unknownBytes)
     ), "Not all emptyBytes are in unknownBytes"
 
     emptyBits = [
-        167,
-        175,
-        204,
-        205,
-        206,
-        207,
-        220,
-        227,
-        238,
-        239,
-        255,
-        270,
-        271,
-        286,
-        287,
-        335,
-        346,
-        367,
-        1825,
-        1826,
-        1827,
-        1828,
-        1829,
-        1830,
-        1831,
-        1833,
-        1834,
-        1835,
-        1836,
-        1837,
-        1838,
-        1839,
-        1847,
-        1850,
-        1851,
-        1852,
-        1853,
-        1854,
-        1855,
-        1871,
-        1916,
-        1918,
-        1919,
-        1928,
-        1929,
-        1930,
-        1931,
-        1934,
-        1935,
-        2005,
-        2082,
-        2084,
-        2087,
-        2110,
-        2111,
+        223,
+        231,
+        260,
+        261,
+        262,
+        263,
+        276,
+        283,
+        294,
+        295,
+        311,
+        326,
+        327,
+        342,
+        343,
+        391,
+        402,
+        423,
+        1881,
+        1882,
+        1883,
+        1884,
+        1885,
+        1886,
+        1887,
+        1889,
+        1890,
+        1891,
+        1892,
+        1893,
+        1894,
+        1895,
+        1903,
+        1906,
+        1907,
+        1908,
+        1909,
+        1910,
+        1911,
+        1927,
+        1972,
+        1974,
+        1975,
+        1984,
+        1985,
+        1986,
+        1987,
+        1990,
+        1991,
+        2061,
     ]
     assert set(emptyBits).issubset(
         set(unknownBits)
@@ -170,7 +161,7 @@ class Mii:
 
     def setName(self) -> None:
         """
-        Decode Mii name from bytes 0-19
+        Decode Mii name from bytes 7-26
 
         The name is stored in UTF-16LE format
         and it ends with an empty character
@@ -183,11 +174,11 @@ class Mii:
             - None
         """
         name = ""
-        currentPosition = 0
+        currentPosition = 7
 
         while (
             self.bytesData[currentPosition : currentPosition + 2] != b"\x00\x00"
-            and currentPosition < 20
+            and currentPosition < 27
         ):
             byte = self.bytesData[currentPosition : currentPosition + 2]
             name += byte.decode("utf-16le")
@@ -197,7 +188,7 @@ class Mii:
 
     def setCreator(self) -> None:
         """
-        Decode creator name from bytes 46-65
+        Decode creator name from bytes 53-72
 
         The creator name is stored in UTF-16LE format
         and it ends with an empty character
@@ -210,11 +201,11 @@ class Mii:
             - None
         """
         creator = ""
-        currentPosition = 46
+        currentPosition = 53
 
         while (
             self.bytesData[currentPosition : currentPosition + 2] != b"\x00\x00"
-            and currentPosition < 66
+            and currentPosition < 73
         ):
             byte = self.bytesData[currentPosition : currentPosition + 2]
             creator += byte.decode("utf-16le")
@@ -224,7 +215,7 @@ class Mii:
 
     def setDateLastCrossedWith(self) -> None:
         """
-        Decode the date of last crossed with from bytes 70-74
+        Decode the date of last crossed with from bytes 77-81
 
         It is stored as a timestamp in milliseconds, with the
         bytes reversed and the date adjusted by -1 day and +30 years.
@@ -236,7 +227,7 @@ class Mii:
             - None
         """
         timestampMs = int.from_bytes(
-            self.bytesData[70:75][::-1], byteorder="big", signed=False
+            self.bytesData[77:82][::-1], byteorder="big", signed=False
         )
 
         rawDatetime = datetime.fromtimestamp(timestampMs / 1000, tz=timezone.utc)
@@ -248,7 +239,7 @@ class Mii:
 
     def setSoftware(self) -> None:
         """
-        Decode last software used from bytes 78-86
+        Decode last software used from bytes 85-93
 
         For some reason, the bytes are reversed,
         so we reverse them to get the correct TitleID.
@@ -260,7 +251,7 @@ class Mii:
             - None
         """
         TitleID = ""
-        for c in reversed(self.bytesData[78:86]):
+        for c in reversed(self.bytesData[85:93]):
             TitleID += format(c, "02X")
 
         self.gameID = TitleID
@@ -268,7 +259,7 @@ class Mii:
 
     def setCountry(self) -> None:
         """
-        Decode country from bytes 86-149
+        Decode country from bytes 93-156
 
         Args:
             - None
@@ -276,11 +267,11 @@ class Mii:
         Returns:
             - None
         """
-        self.country = self.bytesData[86:150].decode("utf-16le").strip("\x00")
+        self.country = self.bytesData[93:157].decode("utf-16le").strip("\x00")
 
     def setSubregion(self) -> None:
         """
-        Decode subregion from bytes 150-213
+        Decode subregion from bytes 157-220
 
         Args:
             - None
@@ -288,12 +279,12 @@ class Mii:
         Returns:
             - None
         """
-        self.subregion = self.bytesData[150:214].decode("utf-16le").strip("\x00")
+        self.subregion = self.bytesData[157:221].decode("utf-16le").strip("\x00")
 
     def setNumberCrossedWith(self) -> None:
         """
         Decode the number of times crossed
-        with this Mii from bytes 214-216
+        with this Mii from bytes 221-223
 
         This has only been checked up to 55,
         so if it give a value greater than that,
@@ -305,7 +296,7 @@ class Mii:
         Returns:
             - None
         """
-        self.nCrossedWith = int.from_bytes(self.bytesData[214:216], byteorder="little")
+        self.nCrossedWith = int.from_bytes(self.bytesData[221:223], byteorder="little")
         if self.nCrossedWith > 55:
             print(
                 "Warning: Number of times crossed with this Mii is greater than 55. "
@@ -316,7 +307,7 @@ class Mii:
     def setStreetPassHits(self) -> None:
         """
         Set the number of StreetPass hits for this Mii
-        This is stored in bytes 218-220.
+        This is stored in bytes 225-227.
 
         This has been checked up to 33630.
 
@@ -327,12 +318,12 @@ class Mii:
             - None
         """
         self.streetPassHits = int.from_bytes(
-            self.bytesData[218:220], byteorder="little"
+            self.bytesData[225:227], byteorder="little"
         )
 
     def setPlazaPopulation(self) -> None:
         """
-        Set the plaza population from bytes 222-224.
+        Set the plaza population from bytes 229-231.
 
         The maximum value possible is 3000
         and it has been checked up to that value.
@@ -344,12 +335,12 @@ class Mii:
             - None
         """
         self.plazaPopulation = int.from_bytes(
-            self.bytesData[222:224], byteorder="little"
+            self.bytesData[229:231], byteorder="little"
         )
 
     def setOutfit(self) -> None:
         """
-        Set the outfit from byte 224.
+        Set the outfit from byte 231.
 
         Args:
             - None
@@ -357,7 +348,7 @@ class Mii:
         Returns:
             - None
         """
-        self.outfit = Outfit(self.bytesData[224]).getOutfit()
+        self.outfit = Outfit(self.bytesData[231]).getOutfit()
 
         if self.outfit == "Unknown Outfit":
             print(
@@ -367,7 +358,7 @@ class Mii:
 
     def setPreferredPet(self) -> None:
         """
-        Set the preferred pet from byte 225.
+        Set the preferred pet from byte 232.
 
         Args:
             - None
@@ -375,11 +366,11 @@ class Mii:
         Returns:
             - None
         """
-        self.preferredPet = PreferredPet(self.bytesData[225]).getPet()
+        self.preferredPet = PreferredPet(self.bytesData[232]).getPet()
 
     def setDream(self) -> None:
         """
-        Set the dream from byte 226.
+        Set the dream from byte 233.
 
         Args:
             - None
@@ -387,11 +378,11 @@ class Mii:
         Returns:
             - None
         """
-        self.dream = Dream(self.bytesData[226]).getDream()
+        self.dream = Dream(self.bytesData[233]).getDream()
 
     def setHobby(self) -> None:
         """
-        Set the hobby from byte 227.
+        Set the hobby from byte 234.
 
         Args:
             - None
@@ -399,12 +390,12 @@ class Mii:
         Returns:
             - None
         """
-        self.hobby = Hobby(self.bytesData[227]).getHobby()
+        self.hobby = Hobby(self.bytesData[234]).getHobby()
 
     def setPremium(self) -> None:
         """
         Set the premium status from first
-        bit of byte 231.
+        bit of byte 238.
 
         If the bit is set, the Mii has paid
         for the DLC.
@@ -415,11 +406,11 @@ class Mii:
         Returns:
             - None
         """
-        self.premium = bool((self.bytesData[231] >> 0) & 1)
+        self.premium = bool((self.bytesData[238] >> 0) & 1)
 
     def setMACOUI(self) -> None:
         """
-        Set the MAC OUI from bytes 254-256.
+        Set the MAC OUI from bytes 261-263.
 
         The OUI is the first 3 bytes of the MAC address.
         It is used to identify the manufacturer of the device.
@@ -431,7 +422,7 @@ class Mii:
         Returns:
             - None
         """
-        self.macOUI = ":".join(f"{b:02X}" for b in self.bytesData[254:257])
+        self.macOUI = ":".join(f"{b:02X}" for b in self.bytesData[261:264])
 
     def checkAssumptions(self) -> None:
         """

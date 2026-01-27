@@ -122,18 +122,11 @@ class MiiPlaza:
     def setMiis(self) -> None:
         """
         Set all Mii attributes by decoding the bytes data
-        from bytes 14154-278153.
+        from bytes 14147-278146.
 
         At most 1000 Miis (264 bytes each) are stored. If there are more,
         they are replaced in the same order except
         the VIPs, which are not replaced.
-
-        TODO Something to note is that the last 26 bytes of the
-        last Mii, seem not to be about the Mii itself.
-        The number of streetpass tags overlap with these bytes,
-        which means that these bytes should not be accounted for
-        decoding the Mii. However, the MAC OUI is stored there,
-        and with the final Mii is a valid address.
 
         Args:
             - None
@@ -142,9 +135,9 @@ class MiiPlaza:
             - None
         """
         miis = []
-        pos = 14154
+        pos = 14147
 
-        while self.bytesData[pos] != 0 and len(miis) < 1000:
+        while self.bytesData[pos + 249] != 0 and len(miis) < 1000:
             miiData = self.bytesData[pos : pos + mii.Mii.MII_SIZE]
             miis.append(mii.Mii(miiData))
             pos += mii.Mii.MII_SIZE
