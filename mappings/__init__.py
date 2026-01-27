@@ -5,3 +5,4 @@ from .dream import Dream
 from .hobby import Hobby
 from .expression import Expression
 from .speechBalloon import SpeechBalloon
+from .birthday import Birthday

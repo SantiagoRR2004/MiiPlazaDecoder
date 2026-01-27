@@ -1,7 +1,5 @@
-from mappings import Software, Outfit, PreferredPet, Dream, Hobby
+from mappings import Software, Outfit, PreferredPet, Dream, Hobby, Birthday
 from datetime import datetime, timedelta, timezone
-from typing import Optional
-from datetime import date
 
 
 class Mii:
@@ -167,67 +165,13 @@ class Mii:
         Decode the birthday from byte 5 and the last
         two bits of byte 6.
 
-        The way the birthday is encoded is very strange,
-        it also seems that it is ready to have no day or month,
-        while only no day and month is possible.
-
-        The last 4 bits of byte 5 are used for the month.
-        It doesn't use the even values and goes by adding 2.
-        Because it starts at 2, we can only have 7 months
-        before having to reset to 0:
-            2 -> January
-            4 -> February
-            6 -> March
-            8 -> April
-            10 -> May
-            12 -> June
-            14 -> July
-            0 -> August
-            2 -> September
-            4 -> October
-            6 -> November
-            8 -> December
-
-        The way to differentiate between when it is reset is
-        that the first 4 bits of byte 5 are even for the first
-        7 months, and odd for the last 5 months.
-
-        The day of the month isn't more simple. Using the first 4
-        bits of byte 5,the first of the month is 2 or 3
-        (depending on the month), and it goes by adding 2.
-        When it reaches the max (14-15), it resets to 0 or 1 and
-        add 1 to the last two bits of byte 6.
-
-        This means the last two bits of byte 6 are which set of
-        8 days of the month it is:
-            0 -> days 1-7
-            1 -> days 8-15
-            2 -> days 16-23
-            3 -> days 24-31
-
         Args:
             - None
 
         Returns:
             - None
         """
-        dayBits = (self.bytesData[5] >> 4) & 0x0F
-        monthBits = self.bytesData[5] & 0x0F
-
-        if dayBits % 2 == 0:
-            # Even, first set of months
-            month = monthBits // 2
-        else:
-            # Odd, second set of months
-            month = (monthBits // 2) + 8
-
-        day = dayBits // 2 + (8 * (self.bytesData[6] & 0x03))
-
-        self.birthday: Optional[date] = None
-
-        if not (day == 0 and month == 0):
-            # Leap year close to 1970 (Unix 0 time)
-            self.birthday = date(month=month, day=day, year=1968)
+        self.birthday = Birthday(self.bytesData[5:7]).getBirthday()
 
     def setName(self) -> None:
         """
