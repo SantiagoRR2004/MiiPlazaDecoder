@@ -1,4 +1,4 @@
-from mappings import Software, Outfit, PreferredPet, Dream, Hobby, Birthday
+from mappings import Software, Outfit, PreferredPet, Dream, Hobby, Birthday, Color
 from datetime import datetime, timedelta, timezone
 
 
@@ -144,6 +144,7 @@ class Mii:
             - None
         """
         self.setBirthday()
+        self.setColor()
         self.setName()
         self.setCreator()
         self.setDateLastCrossedWith()
@@ -172,6 +173,19 @@ class Mii:
             - None
         """
         self.birthday = Birthday(self.bytesData[5:7]).getBirthday()
+
+    def setColor(self) -> None:
+        """
+        Decode the color from the middle bits
+        of byte 6.
+
+        Args:
+            - None
+
+        Returns:
+            - None
+        """
+        self.color = Color(self.bytesData[6]).getColor()
 
     def setName(self) -> None:
         """
@@ -501,6 +515,7 @@ class Mii:
         """
         return {
             "Birthday": self.birthday,
+            "Color": self.color,
             "Name": self.name,
             "Creator": self.creator,
             "DateLastCrossedWith": self.dateLastCrossedWith,

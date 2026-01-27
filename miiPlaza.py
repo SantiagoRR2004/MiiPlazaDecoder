@@ -95,7 +95,7 @@ class MiiPlaza:
         miis = []
         pos = 14147
 
-        while self.bytesData[pos + 249] != 0 and len(miis) < 1000:
+        while self.bytesData[pos + 7] != 0 and len(miis) < 1000:
             miiData = self.bytesData[pos : pos + mii.Mii.MII_SIZE]
             miis.append(mii.Mii(miiData))
             pos += mii.Mii.MII_SIZE
