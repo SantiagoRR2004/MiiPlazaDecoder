@@ -1,4 +1,4 @@
-from mappings import Birthday, Expression, Outfit, SpeechBalloon, Color
+from mappings import Birthday, BackupBirthday, Expression, Outfit, SpeechBalloon, Color
 from grapher import Grapher
 import pandas as pd
 import mii
@@ -56,6 +56,9 @@ class MiiPlaza:
         Decode the birthday from byte 28 and the last
         two bits of byte 29.
 
+        It is also stored in bytes 98-99, so we use it
+        to double check.
+
         Args:
             - None
 
@@ -63,6 +66,11 @@ class MiiPlaza:
             - None
         """
         self.birthday = Birthday(self.bytesData[28:30]).getBirthday()
+
+        backupBirthday = BackupBirthday(self.bytesData[98:100]).getBirthday()
+
+        if backupBirthday is not None and self.birthday is not None:
+            assert self.birthday == backupBirthday, "Birthdays do not match"
 
     def setColor(self) -> None:
         """
